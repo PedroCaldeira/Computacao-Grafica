@@ -16,7 +16,7 @@ function createField(x, y, z){
 	var field = new THREE.Object3D();
 
 	material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true});
-	geometry = new THREE.CubeGeometry(300, 1, 200);
+	geometry = new THREE.CubeGeometry(450, 1, 325);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
 	field.add(mesh);
