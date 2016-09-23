@@ -29,7 +29,7 @@ function createField(x, y, z){
 
 }
 
-<<<<<<< HEAD
+
 function createShip(x,y,z){
 	'use strict';
 	
@@ -48,7 +48,8 @@ function createShip(x,y,z){
 	ship.position.z = z;
 
 	ship.rotateX(250);
-=======
+}
+
 
 function createAlien(x,y,z){
 	'use strict'
@@ -63,7 +64,7 @@ function createAlien(x,y,z){
 	alien.position.y = y;
 	alien.position.z = z;
 
->>>>>>> master
+
 }
 
 function createCamera(){
@@ -86,12 +87,11 @@ function createScene(){
 	scene.add(new THREE.AxisHelper(10));
 	
 	createField(0, 0, 0);
-<<<<<<< HEAD
+
 	createShip(0,0,80);
-=======
+
 	createAlien(-100, 1, -50);
 
->>>>>>> master
 }
 
 function onResize(){
