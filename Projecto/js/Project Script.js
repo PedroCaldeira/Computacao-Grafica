@@ -34,11 +34,11 @@ function createShip(x,y,z){
 	'use strict';
 	
 	var ship = new THREE.Object3D();
-
 	material = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true});
 	geometry = new THREE.ConeGeometry(10,30);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
+	mesh.rotation.x = - Math.PI / 2;
 	ship.add(mesh);
 	
 	scene.add(ship);
@@ -47,7 +47,7 @@ function createShip(x,y,z){
 	ship.position.y = y;
 	ship.position.z = z;
 
-	ship.rotateX(-Math.PI / 2	);
+
 }
 
 
@@ -67,6 +67,22 @@ function createAlien(x,y,z){
 
 }
 
+function createShield(x,y,z){
+	'use strict'
+	var shield= new THREE.Object3D();
+	material= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe:true});
+	geometry= new THREE.CylinderGeometry(10,10,30);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.position.set(x,y,z);
+	mesh.rotation.x = Math.PI / 2;
+	mesh.rotation.z = Math.PI / 2;
+	shield.add(mesh)
+	scene.add(shield);
+	shield.position.x = x;
+	shield.position.y = y;
+	shield.position.z = z;
+}
+
 function createCamera(){
 	'use strict';
 
@@ -79,6 +95,8 @@ function createCamera(){
 	camera.lookAt(scene.position);
 }
 
+f
+
 function createScene(){
 	'use strict';
 	
@@ -88,9 +106,14 @@ function createScene(){
 	
 	createField(0, 0, 0);
 
-	createShip(0,0,80);
+	createShip(0,0,140);
 
 	createAlien(-100, 1, -50);
+
+	createShield(-90,0,30);
+	createShield(-30,0,30);
+	createShield(30,0,30);
+	createShield(90,0,30);
 
 }
 
