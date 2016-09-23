@@ -47,7 +47,7 @@ function createShip(x,y,z){
 	ship.position.y = y;
 	ship.position.z = z;
 
-	ship.rotateX(250);
+	ship.rotateX(-Math.PI / 2	);
 }
 
 
