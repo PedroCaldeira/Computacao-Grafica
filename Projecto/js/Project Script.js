@@ -3,6 +3,7 @@
 var camera, scene, renderer;
 var cameraControls; 
 var geometry, mesh, material;
+var WIDTH=450,HEIGHT=325;
 
 
 
@@ -18,7 +19,7 @@ function createField(x, y, z){
 	var field = new THREE.Object3D();
 
 	material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true});
-	geometry = new THREE.CubeGeometry(450, 1, 325);
+	geometry = new THREE.CubeGeometry(WIDTH, 1, HEIGHT);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
 	field.add(mesh);
@@ -52,23 +53,6 @@ function createShip(x,y,z){
 
 }
 
-/*
-function createAlien(x,y,z){
-	'use strict'
-	var alien= new THREE.Object3D();
-	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe:true});
-	geometry= new THREE.CubeGeometry(10,10,10);
-	mesh = new THREE.Mesh(geometry, material);
-	mesh.position.set(x,y,z);
-	alien.add(mesh)
-	scene.add(alien);
-	alien.position.x = x;
-	alien.position.y = y;
-	alien.position.z = z;
-
-
-}
-*/
 
 function createAlien2(x,y,z){
 	'use strict'
@@ -115,21 +99,7 @@ function addShipBody(obj, radius, Segments){
 	obj.add(mesh)
 
 }
-function addTopShip(obj, x,y,z){
-	'use strict';
-	geometry= new THREE.SphereGeometry(20, 15, 15,0, Math.PI * 2, 0, 0.8 )
-	mesh= new THREE.Mesh(geometry, material)
-	mesh.position.set(x,y,z)
-	obj.add(mesh);
-}
 
-function addBotShip(obj, x,y,z){
-	'use strict';
-	geometry= new THREE.SphereGeometry(20, 15, 15,0, Math.PI * 2, 2.32, 0.8 )
-	mesh= new THREE.Mesh(geometry, material)
-	mesh.position.set(x,y,z)
-	obj.add(mesh);
-}
 
 
 function createShield(x,y,z){
@@ -176,6 +146,17 @@ function createCamera2(){
 	cameraControls.target.set( 0, 0, 0 )
 }
 
+function createAliens(){
+	var aliensPerRow=7;
+	var rows= 4
+	var x= WIDTH/(aliensPerRow+1)
+	var z= HEIGHT/2/(rows+1)
+	for (var r=1; r<=rows; r++ ){
+		for (var a=1;a<=aliensPerRow; a++)
+			createAlien2(x*a-WIDTH/2, 30, (-HEIGHT/2)+z*r);
+	}
+}
+
 function createScene(){
 	'use strict';
 	
@@ -190,8 +171,8 @@ function createScene(){
 
 	createShip(0,0,140);
 
-
-	createAlien2(-100, 30, -50);
+	createAliens();
+	
 
 	createShield(-90,0,30);
 	createShield(-30,0,30);
