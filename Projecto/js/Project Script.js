@@ -1,8 +1,10 @@
 /*global THREE*/
 
 var camera, scene, renderer;
-
+var cameraControls; 
 var geometry, mesh, material;
+
+
 
 function render(){
 	
@@ -50,7 +52,7 @@ function createShip(x,y,z){
 	ship.rotateX(250);
 }
 
-
+/*
 function createAlien(x,y,z){
 	'use strict'
 	var alien= new THREE.Object3D();
@@ -66,17 +68,78 @@ function createAlien(x,y,z){
 
 
 }
+*/
 
-function createCamera(){
+function createAlien2(x,y,z){
+	'use strict'
+	var alien= new THREE.Object3D();
+	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe:true});
+	/* TODO: MENOS SPAGHETTI (nao ta mto mas quase parece programado por um stor de IPM)*/
+	addShipBody(alien, 20, 15)
+	/*addBotShip(alien, 0,25,0)
+	addTopShip(alien, 0,0,0)*/
+
+	//addMidShip(alien)
+
+	scene.add(alien);
+	alien.position.x = x;
+	alien.position.y = y;
+	alien.position.z = z;
+	
+	
+}
+function addShipBody(obj, radius, Segments){
+	'use strict'
+	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 0, 0.8 )
+	mesh= new THREE.Mesh(geometry, material)
+	mesh.position.set(0,0,0)
+	obj.add(mesh);
+	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 2.32, 0.8 )
+	mesh= new THREE.Mesh(geometry, material)
+	mesh.position.set(0,25,0)
+	obj.add(mesh);
+	geometry = new THREE.CylinderGeometry(readius, radius, Segments, 1, false, 0, 2*Math.PI)
+
+}
+function addTopShip(obj, x,y,z){
+	'use strict';
+	geometry= new THREE.SphereGeometry(20, 15, 15,0, Math.PI * 2, 0, 0.8 )
+	mesh= new THREE.Mesh(geometry, material)
+	mesh.position.set(x,y,z)
+	obj.add(mesh);
+}
+
+function addBotShip(obj, x,y,z){
+	'use strict';
+	geometry= new THREE.SphereGeometry(20, 15, 15,0, Math.PI * 2, 2.32, 0.8 )
+	mesh= new THREE.Mesh(geometry, material)
+	mesh.position.set(x,y,z)
+	obj.add(mesh);
+}
+
+
+
+function createCamera(x,y,z){
 	'use strict';
 
 	camera = new THREE.OrthographicCamera(window.innerWidth/ - 4, window.innerWidth/ 4, window.innerHeight/ 4 , window.innerHeight/ - 4, 1, 1000 );
 	
 
-	camera.position.x = 0;
-	camera.position.y = 100;
-	camera.position.z = 0;
+	camera.position.x = x;
+	camera.position.y = y;
+	camera.position.z = z;
 	camera.lookAt(scene.position);
+}
+
+function createCamera2(){
+	'use strict'
+	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
+
+	camera.position.z = 200;
+
+
+	cameraControls = new THREE.TrackballControls( camera );
+	cameraControls.target.set( 0, 0, 0 )
 }
 
 function createScene(){
@@ -88,9 +151,9 @@ function createScene(){
 	
 	createField(0, 0, 0);
 
-	createShip(0,0,80);
+	createShip(0,30,80);
 
-	createAlien(-100, 1, -50);
+	createAlien2(-100, 30, -50);
 
 }
 
@@ -103,11 +166,11 @@ function onResize(){
             camera.right = window.innerWidth/4;
             camera.top = window.innerHeight/4;
             camera.bottom = -window.innerHeight/4 ;
-		camera.updateProjectionMatrix();
+			camera.updateProjectionMatrix();
 	}
 	
 	
-	render();
+	
 	
 }
 
@@ -123,8 +186,20 @@ function onKeyDown(e){
 				}
 			});
 			break;
+		case 49:
+			createCamera(100,0,0);
+			break;
+		case 50:
+			createCamera(0,100,0);
+			break;
+		case 51:
+			createCamera(0,0,100);
+			break;
+		case 52:
+			createCamera2();
+			break;
 	}
-	render();
+	
 }
 
 function init(){
@@ -137,9 +212,24 @@ function init(){
 	document.body.appendChild(renderer.domElement);
 	
 	createScene();
-	createCamera();
+	//createCamera(0,100,0);
+	createCamera2();
+
+	
 
 	render();
 	window.addEventListener("resize", onResize);
 	window.addEventListener("keydown", onKeyDown);
+
+}
+
+
+function animate() {
+'use strict'
+
+	
+	cameraControls.update();
+	render()
+	requestAnimationFrame(animate);
+
 }
