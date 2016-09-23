@@ -73,32 +73,46 @@ function createAlien(x,y,z){
 function createAlien2(x,y,z){
 	'use strict'
 	var alien= new THREE.Object3D();
-	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe:true});
-	/* TODO: MENOS SPAGHETTI (nao ta mto mas quase parece programado por um stor de IPM)*/
-	addShipBody(alien, 20, 15)
-	/*addBotShip(alien, 0,25,0)
-	addTopShip(alien, 0,0,0)*/
-
-	//addMidShip(alien)
+	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe: false});
+	var radius=20, segments=25;
+	addShipBody(alien,radius, segments);
+	addShipCockpit(alien,radius/2, segments);
+	
 
 	scene.add(alien);
 	alien.position.x = x;
 	alien.position.y = y;
 	alien.position.z = z;
+	alien.rotation.x=Math.PI/2
 	
 	
 }
+
+function addShipCockpit(obj, radius, Segments){
+	'use strict'
+	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 1.8, 1.6)
+	mesh= new THREE.Mesh(geometry, material)
+	mesh.position.set(0,10,0)
+	obj.add(mesh);
+}
+
 function addShipBody(obj, radius, Segments){
 	'use strict'
+	//top
 	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 0, 0.8 )
 	mesh= new THREE.Mesh(geometry, material)
 	mesh.position.set(0,0,0)
 	obj.add(mesh);
+	//bottom
 	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 2.32, 0.8 )
 	mesh= new THREE.Mesh(geometry, material)
 	mesh.position.set(0,25,0)
 	obj.add(mesh);
-	geometry = new THREE.CylinderGeometry(radius, radius, Segments, 1, false, 0, 2*Math.PI)
+	//mid
+	geometry = new THREE.CylinderGeometry(radius*0.72, radius*0.72,3, Segments, 1, false, 0, 2*Math.PI)
+	mesh=new THREE.Mesh(geometry, material)
+	mesh.position.set(0,12.5,0)
+	obj.add(mesh)
 
 }
 function addTopShip(obj, x,y,z){
