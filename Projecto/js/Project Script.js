@@ -16,7 +16,7 @@ function createField(x, y, z){
 	var field = new THREE.Object3D();
 
 	material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true});
-	geometry = new THREE.CubeGeometry(300, 1, 200);
+	geometry = new THREE.CubeGeometry(450, 1, 325);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
 	field.add(mesh);
@@ -29,6 +29,7 @@ function createField(x, y, z){
 
 }
 
+<<<<<<< HEAD
 function createShip(x,y,z){
 	'use strict';
 	
@@ -47,12 +48,28 @@ function createShip(x,y,z){
 	ship.position.z = z;
 
 	ship.rotateX(250);
+=======
+
+function createAlien(x,y,z){
+	'use strict'
+	var alien= new THREE.Object3D();
+	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe:true});
+	geometry= new THREE.CubeGeometry(10,10,10);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.position.set(x,y,z);
+	alien.add(mesh)
+	scene.add(alien);
+	alien.position.x = x;
+	alien.position.y = y;
+	alien.position.z = z;
+
+>>>>>>> master
 }
 
 function createCamera(){
 	'use strict';
 
-	camera = new THREE.OrthographicCamera(window.innerWidth/ - 4, window.innerWidth/ 4, window.innerHeight/ 4, window.innerHeight/ - 4, 1, 1000 );
+	camera = new THREE.OrthographicCamera(window.innerWidth/ - 4, window.innerWidth/ 4, window.innerHeight/ 4 , window.innerHeight/ - 4, 1, 1000 );
 	
 
 	camera.position.x = 0;
@@ -69,7 +86,12 @@ function createScene(){
 	scene.add(new THREE.AxisHelper(10));
 	
 	createField(0, 0, 0);
+<<<<<<< HEAD
 	createShip(0,0,80);
+=======
+	createAlien(-100, 1, -50);
+
+>>>>>>> master
 }
 
 function onResize(){
