@@ -36,11 +36,11 @@ function createShip(x,y,z){
 	'use strict';
 	
 	var ship = new THREE.Object3D();
-
 	material = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true});
 	geometry = new THREE.ConeGeometry(10,30);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
+	mesh.rotation.x = - Math.PI / 2;
 	ship.add(mesh);
 	
 	scene.add(ship);
@@ -49,7 +49,7 @@ function createShip(x,y,z){
 	ship.position.y = y;
 	ship.position.z = z;
 
-	ship.rotateX(250);
+
 }
 
 /*
@@ -98,7 +98,7 @@ function addShipBody(obj, radius, Segments){
 	mesh= new THREE.Mesh(geometry, material)
 	mesh.position.set(0,25,0)
 	obj.add(mesh);
-	geometry = new THREE.CylinderGeometry(readius, radius, Segments, 1, false, 0, 2*Math.PI)
+	geometry = new THREE.CylinderGeometry(radius, radius, Segments, 1, false, 0, 2*Math.PI)
 
 }
 function addTopShip(obj, x,y,z){
@@ -118,8 +118,27 @@ function addBotShip(obj, x,y,z){
 }
 
 
+function createShield(x,y,z){
+	'use strict'
+	var shield= new THREE.Object3D();
+	material= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe:true});
+	geometry= new THREE.CylinderGeometry(10,10,30);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.position.set(x,y,z);
+	mesh.rotation.x = Math.PI / 2;
+	mesh.rotation.z = Math.PI / 2;
+	shield.add(mesh)
+	scene.add(shield);
+	shield.position.x = x;
+	shield.position.y = y;
+	shield.position.z = z;
+}
+
+
+
 
 function createCamera(x,y,z){
+
 	'use strict';
 
 	camera = new THREE.OrthographicCamera(window.innerWidth/ - 4, window.innerWidth/ 4, window.innerHeight/ 4 , window.innerHeight/ - 4, 1, 1000 );
@@ -130,6 +149,7 @@ function createCamera(x,y,z){
 	camera.position.z = z;
 	camera.lookAt(scene.position);
 }
+
 
 function createCamera2(){
 	'use strict'
@@ -151,9 +171,18 @@ function createScene(){
 	
 	createField(0, 0, 0);
 
-	createShip(0,30,80);
+
+
+
+	createShip(0,0,140);
+
 
 	createAlien2(-100, 30, -50);
+
+	createShield(-90,0,30);
+	createShield(-30,0,30);
+	createShield(30,0,30);
+	createShield(90,0,30);
 
 }
 
