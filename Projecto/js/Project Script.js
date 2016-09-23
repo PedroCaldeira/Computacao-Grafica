@@ -29,6 +29,26 @@ function createField(x, y, z){
 
 }
 
+function createShip(x,y,z){
+	'use strict';
+	
+	var ship = new THREE.Object3D();
+
+	material = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true});
+	geometry = new THREE.ConeGeometry(10,30);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.position.set(0, 0, 0);
+	ship.add(mesh);
+	
+	scene.add(ship);
+
+	ship.position.x = x;
+	ship.position.y = y;
+	ship.position.z = z;
+
+	ship.rotateX(250);
+}
+
 function createCamera(){
 	'use strict';
 
@@ -49,6 +69,7 @@ function createScene(){
 	scene.add(new THREE.AxisHelper(10));
 	
 	createField(0, 0, 0);
+	createShip(0,0,80);
 }
 
 function onResize(){

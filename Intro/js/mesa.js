@@ -64,7 +64,7 @@ function addTableLeg(obj, x, y, z){
 function createCamera(){
 	'use strict';
 
-	camera = new THREE.PerspectiveCamera(70,window.innerWidth / window.innerHeight,1,1000);
+	camera = new THREE.OrthographicCamera( 70 / - 2, 70 / 2, 70 / 2, 70 / - 2, 1, 1000 );
 
 	camera.position.x = 0;
 	camera.position.y = 100;
