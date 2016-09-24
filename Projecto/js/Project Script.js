@@ -18,12 +18,12 @@ function createField(x, y, z){
 	
 	var field = new THREE.Object3D();
 
-	material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true});
-	geometry = new THREE.CubeGeometry(WIDTH, 1, HEIGHT);
+	material = new THREE.MeshLambertMaterial({ color: 0x4d4d4d, wireframe: true});
+	geometry = new THREE.PlaneGeometry(WIDTH, HEIGHT);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
 	field.add(mesh);
-	
+	field.rotation.x=-Math.PI/2
 	scene.add(field);
 
 	field.position.x = x;
@@ -33,11 +33,12 @@ function createField(x, y, z){
 }
 
 
+
 function createShip(x,y,z){
 	'use strict';
 	
 	var ship = new THREE.Object3D();
-	material = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true});
+	material = new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true});
 	geometry = new THREE.ConeGeometry(10,30);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
@@ -57,7 +58,7 @@ function createShip(x,y,z){
 function createAlien2(x,y,z){
 	'use strict'
 	var alien= new THREE.Object3D();
-	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe: false});
+	material= new THREE.MeshLambertMaterial({color: 0x00ffff,  wireframe: false});
 	var radius=20, segments=25;
 	addShipBody(alien,radius, segments);
 	addShipCockpit(alien,radius/2, segments);
@@ -105,7 +106,7 @@ function addShipBody(obj, radius, Segments){
 function createShield(x,y,z){
 	'use strict'
 	var shield= new THREE.Object3D();
-	material= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe:true});
+	material= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe:true});
 	geometry= new THREE.CylinderGeometry(10,10,30);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(x,y,z);
@@ -178,8 +179,33 @@ function createScene(){
 	createShield(-30,0,30);
 	createShield(30,0,30);
 	createShield(90,0,30);
+	createLight();
+
+	
+}
+
+function createLight(){
+	ambientLight = new THREE.AmbientLight(0xffffff);
+    scene.add(ambientLight);            
+
+/*
+	var spotLight = new THREE.SpotLight(0xffffff, 1, 100000, Math.PI/2, 0, 0);
+	
+	spotLight.position.set(250,100,0);
+	spotLight.castShadow = true;
+
+	spotLight.shadow.mapSize.width = 1024;
+	spotLight.shadow.mapSize.height = 1024;
+
+	spotLight.shadow.camera.near = 500;
+	spotLight.shadow.camera.far = 4000;
+	spotLight.shadow.camera.fov = 90;
+
+	scene.add(spotLight);*/
 
 }
+
+
 
 function onResize(){
 	'use strict';
