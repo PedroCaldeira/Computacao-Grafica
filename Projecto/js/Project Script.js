@@ -115,6 +115,7 @@ function addAlienBody(obj,material, radius, Segments){
 
 }
 
+/*
 function createShield(x,y,z){
 	'use strict'
 	var shield= new THREE.Object3D();
@@ -130,6 +131,40 @@ function createShield(x,y,z){
 	shield.position.y = y;
 	shield.position.z = z;
 }
+*/
+function createShield(x,y,z){
+	'use strict';
+	var shield = new THREE.Object3D();
+	material = new THREE.MeshLambertMaterial({color:0xff00ff, wireframe:true});
+	addShieldWalls(shield,material);
+	addShieldDetails(shield,material);
+	scene.add(shield);
+	shield.position.x = x;
+	shield.position.y = y;
+	shield.position.z = z;
+}
+
+function addShieldWalls(object,material){
+	'use strict';
+	geometry= new THREE.CubeGeometry(50,10,10);
+	mesh= new THREE.Mesh(geometry, material);
+	mesh.position.set(0,0,0);
+	object.add(mesh);
+
+	geometry= new THREE.CubeGeometry(10,10,20);
+	mesh= new THREE.Mesh(geometry, material);
+	mesh.position.set(-20,0,15);
+	object.add(mesh);
+
+
+geometry= new THREE.CubeGeometry(10,10,20);
+	mesh= new THREE.Mesh(geometry, material);
+	mesh.position.set(20,0,15);
+	object.add(mesh);
+
+}
+function addShieldDetails(object,material){}
+
 
 function createCamera(x,y,z){
 
@@ -164,6 +199,12 @@ function createAliens(aliensPerRow, rows){
 	}
 }
 
+function createShields(nshields){
+	var x= WIDTH/(nshields+1);
+	for (var a=1;a<=nshields; a++)
+		createShield(x*a-WIDTH/2, 30, 70);
+	}
+
 function createScene(){
 	'use strict';
 	
@@ -178,10 +219,7 @@ function createScene(){
 	createAliens(7,4);
 	
 
-	createShield(-90,0,30);
-	createShield(-30,0,30);
-	createShield(30,0,30);
-	createShield(90,0,30);
+	createShields(3);
 	createLight();
 
 	
