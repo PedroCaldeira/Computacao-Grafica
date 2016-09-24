@@ -155,9 +155,7 @@ function createCamera2(){
 	cameraControls.target.set( 0, 0, 0 )
 }
 
-function createAliens(){
-	var aliensPerRow=7;
-	var rows= 4
+function createAliens(aliensPerRow, rows){
 	var x= WIDTH/(aliensPerRow+1)
 	var z= HEIGHT/2/(rows+1)
 	for (var r=1; r<=rows; r++ ){
@@ -177,7 +175,7 @@ function createScene(){
 
 	createShip(0,20,140);
 
-	createAliens();
+	createAliens(7,4);
 	
 
 	createShield(-90,0,30);
@@ -240,13 +238,13 @@ function onKeyDown(e){
 			});
 			break;
 		case 49:
-			createCamera(100,0,0);
+			createCamera(WIDTH/2,0,0);
 			break;
 		case 50:
 			createCamera(0,100,0);
 			break;
 		case 51:
-			createCamera(0,0,100);
+			createCamera(0,0,HEIGHT/2);
 			break;
 		case 52:
 			createCamera2();
