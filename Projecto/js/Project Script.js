@@ -4,7 +4,7 @@ var camera, scene, renderer;
 var cameraControls; 
 var geometry, mesh, material;
 var WIDTH=450,HEIGHT=325;
-
+var yLineup=30;
 
 
 function render(){
@@ -116,55 +116,51 @@ function addAlienBody(obj,material, radius, Segments){
 
 }
 
-/*
-function createShield(x,y,z){
-	'use strict'
-	var shield= new THREE.Object3D();
-	material= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe:true});
-	geometry= new THREE.CylinderGeometry(10,10,30);
-	mesh = new THREE.Mesh(geometry, material);
-	mesh.position.set(x,y,z);
-	mesh.rotation.x = Math.PI / 2;
-	mesh.rotation.z = Math.PI / 2;
-	shield.add(mesh)
-	scene.add(shield);
-	shield.position.x = x;
-	shield.position.y = y;
-	shield.position.z = z;
-}
-*/
 function createShield(x,y,z){
 	'use strict';
 	var shield = new THREE.Object3D();
-	material = new THREE.MeshLambertMaterial({color:0xff00ff, wireframe:true});
-	addShieldWalls(shield,material);
-	addShieldDetails(shield,material);
+	material = new THREE.MeshLambertMaterial({color:0x00ff00, wireframe:true});
+	var wallDistance=40, wallThickness=15;
+	addShieldWalls(shield,wallDistance, wallThickness);
+	addShieldEdges(shield, wallDistance, wallThickness)
+	addShieldRoof(shield, wallDistance, wallThickness);
 	scene.add(shield);
 	shield.position.x = x;
 	shield.position.y = y;
 	shield.position.z = z;
 }
 
-function addShieldWalls(object,material){
-	'use strict';
-	geometry= new THREE.CubeGeometry(50,10,10);
-	mesh= new THREE.Mesh(geometry, material);
-	mesh.position.set(0,0,0);
-	object.add(mesh);
 
-	geometry= new THREE.CubeGeometry(10,10,20);
-	mesh= new THREE.Mesh(geometry, material);
-	mesh.position.set(-20,0,15);
-	object.add(mesh);
-
-
-geometry= new THREE.CubeGeometry(10,10,20);
-	mesh= new THREE.Mesh(geometry, material);
-	mesh.position.set(20,0,15);
-	object.add(mesh);
-
+function addShieldEdges(object, distance, wallThickness){
+	'use strict'
+	geometry=new THREE.CubeGeometry(Math.sqrt(2*wallThickness*wallThickness),wallThickness,Math.sqrt(2*wallThickness*wallThickness));
+	mesh=new THREE.Mesh(geometry, material);
+	mesh.rotation.y=Math.PI/4
+	mesh.position.set(-distance/2+wallThickness/2, 0, -wallThickness)
+	var mesh2=mesh.clone()
+	mesh2.position.set(distance/2-wallThickness/2, 0, -wallThickness)
+	object.add(mesh)
+	object.add(mesh2)
 }
-function addShieldDetails(object,material){}
+
+function addShieldWalls(object, distance, wallThickness){
+	'use strict'
+	geometry=new THREE.CubeGeometry(wallThickness,wallThickness,wallThickness*2);
+	mesh=new THREE.Mesh(geometry, material);
+	var mesh2=mesh.clone()
+	mesh.position.set(-distance/2, 0, 0)
+	mesh2.position.set(distance/2, 0, 0)
+	object.add(mesh2)
+	object.add(mesh);
+}
+
+function addShieldRoof(object, distance, wallThickness){
+	'use strict'
+	geometry=new THREE.CubeGeometry(distance-wallThickness,wallThickness,wallThickness);
+	mesh=new THREE.Mesh(geometry, material);
+	mesh.position.set(0, 0, -wallThickness*1.5)
+	object.add(mesh)
+}
 
 
 function createCamera(x,y,z){
@@ -196,14 +192,14 @@ function createAliens(aliensPerRow, rows){
 	var z= HEIGHT/2/(rows+1)
 	for (var r=1; r<=rows; r++ ){
 		for (var a=1;a<=aliensPerRow; a++)
-			createAlien2(x*a-WIDTH/2, 30, (-HEIGHT/2)+z*r);
+			createAlien2(x*a-WIDTH/2, yLineup, (-HEIGHT/2)+z*r);
 	}
 }
 
 function createShields(nshields){
 	var x= WIDTH/(nshields+1);
 	for (var a=1;a<=nshields; a++)
-		createShield(x*a-WIDTH/2, 30, 70);
+		createShield(x*a-WIDTH/2, yLineup, 70);
 	}
 
 function createScene(){
@@ -218,9 +214,7 @@ function createScene(){
 	createShip(0,20,140);
 
 	createAliens(7,4);
-	
-
-	createShields(3);
+	createShields(4);
 	createLight();
 
 	
@@ -258,7 +252,6 @@ function onResize(){
             camera.bottom = -window.innerHeight/4 ;
 			camera.updateProjectionMatrix();
 	}
-	
 	
 	
 	
