@@ -31,11 +31,12 @@ function createField(x, y, z){
 	field.position.z = z;
 
 }
-
+var ship;
 function createShip(x,y,z){
 	'use strict';
 	
-	var ship = new THREE.Object3D();
+	ship = new THREE.Object3D();
+	ship.userData = { velocity: 0, acceleration:0};
 	material = new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true});
 	addShipBody(ship, material);
 	addTurbos(ship, material);
@@ -288,12 +289,27 @@ function onKeyDown(e){
 			createCamera2();
 			break;
 		case 37://left arrow
-		
-		
+			ship.userData.acceleration-=0.01;
+			break;
 		
 		case 39://right arrow
+			ship.userData.acceleration+=0.01;
+			break;
 	}
 	
+}
+
+function onKeyUp(e){
+	'use strict';
+	switch(e.keyCode){
+		case 37://left arrow
+			ship.userData.acceleration+=0.01;
+			break;
+		
+		case 39://right arrow
+			ship.userData.acceleration-=0.01;
+			break;
+	}
 }
 
 function init(){
@@ -314,13 +330,22 @@ function init(){
 	render();
 	window.addEventListener("resize", onResize);
 	window.addEventListener("keydown", onKeyDown);
+	window.addEventListener("keyup", onKeyUp);
 
+}
+
+function updateShip(){
+	ship.userData.velocity+=ship.userData.acceleration; //aceleracao=(60)^2*aceleracao em unidades/segundo^2 e velociadade =60*unidades/segundo porque 60 frames=1segundo
+	ship.position.x+=ship.userData.velocity;
+	ship.userData.velocity=ship.userData.velocity*0.8;//resistencia na velocidade
+	ship.userData.acceleration=ship.userData.acceleration*0.98; //resistencia na aceleracao
+	//ship.userData.acceleration-=0.05*(ship.userData.velocity)^2 Tentei usar esta formula da Resistencia do Ar mas deu merda para quase qualquer constante
 }
 
 function animate() {
 'use strict'
 
-	
+	updateShip();
 	cameraControls.update();
 	render()
 	requestAnimationFrame(animate);
