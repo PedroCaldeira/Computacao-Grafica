@@ -22,7 +22,7 @@ function createScene(){
 	
 	createField(0, 0, 0);
 
-	createShip(0,20,140);
+	createShip(0,20,130);
 
 	createAliens(7,4);
 	createShields(4);
@@ -59,6 +59,7 @@ function createShip(x,y,z){
 	ship.userData = { velocity: 0, acceleration:0};
 	material = new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: true});
 	addShipBody(ship, material);
+	addShipTop(ship, material);
 	addShipFront(ship, material);
 	addShipWings(ship, material);
 	addShipTail(ship, material);
@@ -69,40 +70,64 @@ function createShip(x,y,z){
 }
 	
 	function addShipBody(ship, material){
+		geometry = new THREE.BoxGeometry( 10, 30, 10);
 		
-		geometry = new THREE.CylinderGeometry( 7, 5, 20, 20, 10, true, 0, Math.PI);
 		mesh = new THREE.Mesh(geometry, material);
 		
 		ship.add(mesh);
 		mesh.rotation.z=Math.PI/2;
 		mesh.rotation.y=Math.PI/2;
 	}
-	
-	function addShipFront(ship, material){
-		geometry = new THREE.SphereGeometry( 5, 20, 20, 0, Math.PI/2);
+	function addShipTop(ship, material){
+		geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
+		material = new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: true});
 		mesh = new THREE.Mesh(geometry, material);
-		mesh.rotation.x=Math.PI;
-		mesh.rotation.z=Math.PI/2;
-		mesh.position.z=-10;
+		mesh.rotation.z=-Math.PI/2;
+		mesh.rotation.x=-Math.PI;
+		mesh.rotation.y=Math.PI/2;
+		mesh.position.set(0, 5, 0);
+		ship.add(mesh);
+		geometry = new THREE.ConeGeometry(3.5,5, 10, 1, true, 0, Math.PI);
+		mesh = new THREE.Mesh(geometry, material);
+		mesh.position.set(0, 5, 7.5)
+		mesh.rotation.x=Math.PI/2;
+		mesh.rotation.y=Math.PI/2;
+		ship.add(mesh);
+		geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
+		material = new THREE.MeshLambertMaterial({ color: 0x000000, wireframe: true});
+		mesh = new THREE.Mesh(geometry, material);
+		mesh.rotation.x=-Math.PI/2;
+		mesh.position.set(0, 5, -5)
+		ship.add(mesh);
+		
+	}
+	function addShipFront(ship, material){
+		geometry = new THREE.ConeGeometry( 7, 10, 4);
+		mesh = new THREE.Mesh(geometry, material);
+		mesh.rotation.x=-Math.PI/2;
+		mesh.rotation.y=Math.PI/4;
+		mesh.position.z=-20;
 		ship.add(mesh);
 	}
 	function addShipWings(ship, material){
-		var wingShape = new THREE.Shape();
-		wingShape.moveTo(0,-7, 12);
-		wingShape.lineTo(0,20, 0);
-		wingShape.lineTo(0, 15, 0);
-		wingShape.lineTo(0, 0, 0);
-		wingShape.lineTo(0, 0, 12);
-		geometry = new THREE.ShapeGeometry( wingShape );
+		geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3((0, 0, 0)), 
+							   new THREE.Vector3((0, 0, 10)), 
+							   new THREE.Vector3((10, 0, 10)))
+		
+		geometry.faces.push(new THREE.Face3(0, 1, 2))
+		geometry.computeFaceNormals();
 		mesh = new THREE.Mesh( geometry, material ) ;
+		mesh.position.set(1, 2, 3)
 		ship.add(mesh);
 	}
 	function addShipTail(ship, material){
-		geometry = new THREE.CylinderGeometry( 5, 7, 4, 20, 10, false, 0, Math.PI);
+		geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
 		mesh = new THREE.Mesh(geometry, material);
-		mesh.position.z=12;
+		mesh.position.z=17;
 		mesh.rotation.z=Math.PI/2;
 		mesh.rotation.y=Math.PI/2;
+		mesh.rotation.x=Math.PI;
 		
 		ship.add(mesh);
 	}
@@ -335,6 +360,7 @@ function updateShip(){
 	ship.userData.velocity=ship.userData.velocity*0.8;//resistencia na velocidade
 	ship.userData.acceleration=ship.userData.acceleration*0.98; //resistencia na aceleracao
 	//ship.userData.acceleration-=0.05*(ship.userData.velocity)^2 Tentei usar esta formula da Resistencia do Ar mas deu merda para quase qualquer constante
+	ship.rotation.z=-ship.userData.velocity*Math.PI*0.2
 }
 
 function animate() {
