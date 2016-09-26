@@ -5,12 +5,30 @@ var cameraControls;
 var geometry, mesh, material;
 var WIDTH=450,HEIGHT=325;
 var yLineup=30;
-
+var ship;
 
 function render(){
 	
 	'use strict';
 	renderer.render(scene, camera);
+}
+function createScene(){
+	
+	'use strict';
+	
+	scene = new THREE.Scene();
+	
+	scene.add(new THREE.AxisHelper(10));
+	
+	createField(0, 0, 0);
+
+	createShip(0,20,140);
+
+	createAliens(7,4);
+	createShields(4);
+	createLight();
+
+	
 }
 
 function createField(x, y, z){
@@ -31,44 +49,64 @@ function createField(x, y, z){
 	field.position.z = z;
 
 }
-var ship;
+
+
+
 function createShip(x,y,z){
 	'use strict';
 	
 	ship = new THREE.Object3D();
 	ship.userData = { velocity: 0, acceleration:0};
-	material = new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true});
+	material = new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: true});
 	addShipBody(ship, material);
-	addTurbos(ship, material);
+	addShipFront(ship, material);
+	addShipWings(ship, material);
+	addShipTail(ship, material);
 	scene.add(ship);
 	ship.position.x = x;
 	ship.position.y = y;
 	ship.position.z = z;
 }
-
-function addShipBody(ship, material){
-	geometry = new THREE.BoxGeometry(30, 10, 20);
-	mesh = new THREE.Mesh(geometry, material);
-	ship.add(mesh)
-}
-
-function addTurbos(ship, material){
-	var points = [];
-	for ( var i = 0; i < 10; i ++ ) {
-		points.push( new THREE.Vector2( Math.sin( i * 0.3 ) * 1 + 5, ( i - 5 ) * 0.5 ) );
+	
+	function addShipBody(ship, material){
+		
+		geometry = new THREE.CylinderGeometry( 7, 5, 20, 20, 10, true, 0, Math.PI);
+		mesh = new THREE.Mesh(geometry, material);
+		
+		ship.add(mesh);
+		mesh.rotation.z=Math.PI/2;
+		mesh.rotation.y=Math.PI/2;
 	}
 	
-	geometry = new THREE.LatheGeometry(points);
-	mesh = new THREE.Mesh( geometry, material );
-	mesh.position.set(10,0,15);
-	mesh.rotation.x= Math.PI*1.5;
-	mesh.material.side = THREE.DoubleSide;
-	ship.add(mesh);//TODO:CLONE MESH
-	mesh = new THREE.Mesh( geometry, material );
-	mesh.position.set(-10,0,15);
-	mesh.rotation.x= Math.PI*1.5;
-	ship.add(mesh);
-}
+	function addShipFront(ship, material){
+		geometry = new THREE.SphereGeometry( 5, 20, 20, 0, Math.PI/2);
+		mesh = new THREE.Mesh(geometry, material);
+		mesh.rotation.x=Math.PI;
+		mesh.rotation.z=Math.PI/2;
+		mesh.position.z=-10;
+		ship.add(mesh);
+	}
+	function addShipWings(ship, material){
+		var wingShape = new THREE.Shape();
+		wingShape.moveTo(0,-7, 12);
+		wingShape.lineTo(0,20, 0);
+		wingShape.lineTo(0, 15, 0);
+		wingShape.lineTo(0, 0, 0);
+		wingShape.lineTo(0, 0, 12);
+		geometry = new THREE.ShapeGeometry( wingShape );
+		mesh = new THREE.Mesh( geometry, material ) ;
+		ship.add(mesh);
+	}
+	function addShipTail(ship, material){
+		geometry = new THREE.CylinderGeometry( 5, 7, 4, 20, 10, false, 0, Math.PI);
+		mesh = new THREE.Mesh(geometry, material);
+		mesh.position.z=12;
+		mesh.rotation.z=Math.PI/2;
+		mesh.rotation.y=Math.PI/2;
+		
+		ship.add(mesh);
+	}
+
 
 function createAlien2(x,y,z){
 	'use strict'
@@ -116,6 +154,8 @@ function addAlienBody(obj,material, radius, Segments){
 
 }
 
+
+
 function createShield(x,y,z){
 	'use strict';
 	var shield = new THREE.Object3D();
@@ -129,7 +169,6 @@ function createShield(x,y,z){
 	shield.position.y = y;
 	shield.position.z = z;
 }
-
 
 function addShieldEdges(object, distance, wallThickness){
 	'use strict'
@@ -161,6 +200,7 @@ function addShieldRoof(object, distance, wallThickness){
 	mesh.position.set(0, 0, -wallThickness*1.5)
 	object.add(mesh)
 }
+
 
 
 function createCamera(x,y,z){
@@ -202,23 +242,6 @@ function createShields(nshields){
 		createShield(x*a-WIDTH/2, yLineup, 70);
 	}
 
-function createScene(){
-	'use strict';
-	
-	scene = new THREE.Scene();
-	
-	scene.add(new THREE.AxisHelper(10));
-	
-	createField(0, 0, 0);
-
-	createShip(0,20,140);
-
-	createAliens(7,4);
-	createShields(4);
-	createLight();
-
-	
-}
 
 function createLight(){
 	ambientLight = new THREE.AmbientLight(0xffffff);
@@ -305,6 +328,25 @@ function onKeyUp(e){
 	}
 }
 
+
+function updateShip(){
+	ship.userData.velocity+=ship.userData.acceleration; //aceleracao=(60)^2*aceleracao em unidades/segundo^2 e velociadade =60*unidades/segundo porque 60 frames=1segundo
+	ship.position.x+=ship.userData.velocity;
+	ship.userData.velocity=ship.userData.velocity*0.8;//resistencia na velocidade
+	ship.userData.acceleration=ship.userData.acceleration*0.98; //resistencia na aceleracao
+	//ship.userData.acceleration-=0.05*(ship.userData.velocity)^2 Tentei usar esta formula da Resistencia do Ar mas deu merda para quase qualquer constante
+}
+
+function animate() {
+'use strict'
+
+	updateShip();
+	cameraControls.update();
+	render()
+	requestAnimationFrame(animate);
+
+}
+
 function init(){
 	'use strict';
 	
@@ -324,23 +366,5 @@ function init(){
 	window.addEventListener("resize", onResize);
 	window.addEventListener("keydown", onKeyDown);
 	window.addEventListener("keyup", onKeyUp);
-
-}
-
-function updateShip(){
-	ship.userData.velocity+=ship.userData.acceleration; //aceleracao=(60)^2*aceleracao em unidades/segundo^2 e velociadade =60*unidades/segundo porque 60 frames=1segundo
-	ship.position.x+=ship.userData.velocity;
-	ship.userData.velocity=ship.userData.velocity*0.8;//resistencia na velocidade
-	ship.userData.acceleration=ship.userData.acceleration*0.98; //resistencia na aceleracao
-	//ship.userData.acceleration-=0.05*(ship.userData.velocity)^2 Tentei usar esta formula da Resistencia do Ar mas deu merda para quase qualquer constante
-}
-
-function animate() {
-'use strict'
-
-	updateShip();
-	cameraControls.update();
-	render()
-	requestAnimationFrame(animate);
 
 }
