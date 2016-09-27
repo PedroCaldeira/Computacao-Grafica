@@ -35,7 +35,7 @@ function createField(x, y, z){
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
 	field.add(mesh);
-	field.rotation.x=-Math.PI/2
+	field.rotation.x=Math.PI/2
 	scene.add(field);
 	field.position.set(x,y,z);
 
@@ -265,6 +265,20 @@ function createShields(nshields){
 	}
 
 
+function createScenery(){
+	var texture=THREE.ImageUtils.loadTexture("./stars.jpg");
+	texture.wrapS=THREE.RepeatWrapping;
+	texture.wrapT=THREE.RepeatWrapping;
+	texture.repeat.set(6,6);
+	material=new THREE.MeshLambertMaterial({map : texture, color : 0xffffff, wireframe: true });
+	var world = new THREE.Mesh(new THREE.SphereGeometry(800, 64,64 ), material);
+	world.material.side =THREE.DoubleSide;
+	
+	scene.add(world)
+
+}
+
+
 function createLight(){
 	ambientLight = new THREE.AmbientLight(0xffffff);
     scene.add(ambientLight);            
@@ -383,8 +397,9 @@ function init(){
 	createScene();
 	//createCamera(0,100,0);
 	createCamera2();
-
+	createScenery();
 	render();
+
 	window.addEventListener("resize", onResize);
 	window.addEventListener("keydown", onKeyDown);
 	window.addEventListener("keyup", onKeyUp);
