@@ -53,6 +53,7 @@ function createShip(x,y,z){
 	addShipFront(ship, material);
 	addShipWings(ship, material);
 	addShipTail(ship, material);
+	//addFancyStabilizers(ship);
 	scene.add(ship);
 	ship.position.set(x,y,z);
 }
@@ -97,10 +98,14 @@ function addShipWings(ship, material){
 	/*FIX ME I'M Broken*/
 	geometry = new THREE.Geometry();
 	geometry.vertices.push( new THREE.Vector3( -10,  10, 0 ),
-							new THREE.Vector3( -10, -10, 0 ),
-							new THREE.Vector3(  10, -10, 0 )
+							new THREE.Vector3( -10, -5, 0 ),
+							new THREE.Vector3(  5, -5, 0 ),
+							new THREE.Vector3(  5, -10, 0),
+							new THREE.Vector3( -10, -10, 0)
 							);
 	geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+	geometry.faces.push( new THREE.Face3( 2, 3, 4 ) );
+	geometry.faces.push( new THREE.Face3( 2, 1, 4 ) );
 
 	geometry.computeFaceNormals();
 	mesh = new THREE.Mesh( geometry, material ) ;
@@ -113,6 +118,22 @@ function addShipWings(ship, material){
 	ship.add(mesh2);
 	ship.add(mesh);
 }
+
+function addFancyStabilizers(ship){
+	geometry = new THREE.Geometry();
+	geometry.vertices.push( new THREE.Vector3(  20, 2, 10 ),
+							new THREE.Vector3( 20, 0, 5 ) ,
+							new THREE.Vector3(  20, 0, 10));
+
+	geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+	mesh = new THREE.Mesh( geometry, material ) ;
+	mesh.material.side=THREE.DoubleSide;
+	var mesh2= mesh.clone()
+	mesh2.position.x-=40
+	ship.add(mesh);
+	ship.add(mesh2);
+}
+
 function addShipTail(ship, material){
 	geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
 	mesh = new THREE.Mesh(geometry, material);
