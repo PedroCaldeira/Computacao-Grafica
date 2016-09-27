@@ -327,11 +327,13 @@ function onKeyDown(e){
 			createCamera2();
 			break;
 		case 37://left arrow
-			ship.userData.acceleration=-0.1;
+			if(ship.userData.acceleration!=-0.1)
+				ship.userData.acceleration-=0.1;
 			break;
 		
 		case 39://right arrow
-			ship.userData.acceleration=0.1;
+			if(ship.userData.acceleration!=0.1)
+				ship.userData.acceleration+=0.1;
 			break;
 	}
 	
@@ -341,12 +343,12 @@ function onKeyUp(e){
 	'use strict';
 	switch(e.keyCode){
 		case 37://left arrow
-			ship.userData.acceleration=0;
+			ship.userData.acceleration+=0.1;
 
 			break;
 		
 		case 39://right arrow
-			ship.userData.acceleration=0;
+			ship.userData.acceleration-=0.1	;
 			break;
 	}
 }
@@ -359,7 +361,7 @@ function updateShip(){
 	//ship.userData.acceleration=ship.userData.acceleration*0.98; //resistencia na aceleracao
 	//ship.userData.acceleration-=0.05*(ship.userData.velocity)^2 Tentei usar esta formula da Resistencia do Ar mas deu merda para quase qualquer constante
 	ship.rotation.z=-ship.userData.velocity*Math.PI*0.2;
-	console.log(ship.userData.velocity)
+	console.log(ship.userData.acceleration)
 
 }
 
