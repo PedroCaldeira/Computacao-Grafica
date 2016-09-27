@@ -53,7 +53,7 @@ function createShip(x,y,z){
 	addShipFront(ship, material);
 	addShipWings(ship, material);
 	addShipTail(ship, material);
-	//addFancyStabilizers(ship);
+	addFancyStabilizers(ship);
 	scene.add(ship);
 	ship.position.set(x,y,z);
 }
