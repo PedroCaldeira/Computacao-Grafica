@@ -8,16 +8,13 @@ var yLineup=30;
 var ship;
 
 function render(){
-	
 	'use strict';
 	renderer.render(scene, camera);
 }
+
 function createScene(){
-	
 	'use strict';
-	
 	scene = new THREE.Scene();
-	
 	scene.add(new THREE.AxisHelper(10));
 	
 	createField(0, 0, 0);
@@ -27,15 +24,12 @@ function createScene(){
 	createAliens(7,4);
 	createShields(4);
 	createLight();
-
-	
 }
 
 function createField(x, y, z){
 	'use strict';
 	
 	var field = new THREE.Object3D();
-
 	material = new THREE.MeshLambertMaterial({ color: 0x4d4d4d, wireframe: true});
 	geometry = new THREE.PlaneGeometry(WIDTH, HEIGHT);
 	mesh = new THREE.Mesh(geometry, material);
@@ -43,13 +37,9 @@ function createField(x, y, z){
 	field.add(mesh);
 	field.rotation.x=-Math.PI/2
 	scene.add(field);
-
-	field.position.x = x;
-	field.position.y = y;
-	field.position.z = z;
+	field.position.set(x,y,z);
 
 }
-
 
 
 function createShip(x,y,z){
@@ -64,73 +54,72 @@ function createShip(x,y,z){
 	addShipWings(ship, material);
 	addShipTail(ship, material);
 	scene.add(ship);
-	ship.position.x = x;
-	ship.position.y = y;
-	ship.position.z = z;
+	ship.position.set(x,y,z);
 }
 	
-	function addShipBody(ship, material){
-		geometry = new THREE.BoxGeometry( 10, 30, 10);
-		
-		mesh = new THREE.Mesh(geometry, material);
-		
-		ship.add(mesh);
-		mesh.rotation.z=Math.PI/2;
-		mesh.rotation.y=Math.PI/2;
-	}
-	function addShipTop(ship, material){
-		geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
-		material = new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: true});
-		mesh = new THREE.Mesh(geometry, material);
-		mesh.rotation.z=-Math.PI/2;
-		mesh.rotation.x=-Math.PI;
-		mesh.rotation.y=Math.PI/2;
-		mesh.position.set(0, 5, 0);
-		ship.add(mesh);
-		geometry = new THREE.ConeGeometry(3.5,5, 10, 1, true, 0, Math.PI);
-		mesh = new THREE.Mesh(geometry, material);
-		mesh.position.set(0, 5, 7.5)
-		mesh.rotation.x=Math.PI/2;
-		mesh.rotation.y=Math.PI/2;
-		ship.add(mesh);
-		geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
-		material = new THREE.MeshLambertMaterial({ color: 0x000000, wireframe: true});
-		mesh = new THREE.Mesh(geometry, material);
-		mesh.rotation.x=-Math.PI/2;
-		mesh.position.set(0, 5, -5)
-		ship.add(mesh);
-		
-	}
-	function addShipFront(ship, material){
-		geometry = new THREE.ConeGeometry( 7, 10, 4);
-		mesh = new THREE.Mesh(geometry, material);
-		mesh.rotation.x=-Math.PI/2;
-		mesh.rotation.y=Math.PI/4;
-		mesh.position.z=-20;
-		ship.add(mesh);
-	}
-	function addShipWings(ship, material){
-		geometry = new THREE.Geometry();
-		geometry.vertices.push(new THREE.Vector3((0, 0, 0)), 
-							   new THREE.Vector3((0, 0, 10)), 
-							   new THREE.Vector3((10, 0, 10)))
-		
-		geometry.faces.push(new THREE.Face3(0, 1, 2))
-		geometry.computeFaceNormals();
-		mesh = new THREE.Mesh( geometry, material ) ;
-		mesh.position.set(1, 2, 3)
-		ship.add(mesh);
-	}
-	function addShipTail(ship, material){
-		geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
-		mesh = new THREE.Mesh(geometry, material);
-		mesh.position.z=17;
-		mesh.rotation.z=Math.PI/2;
-		mesh.rotation.y=Math.PI/2;
-		mesh.rotation.x=Math.PI;
-		
-		ship.add(mesh);
-	}
+function addShipBody(ship, material){
+	geometry = new THREE.BoxGeometry( 10, 30, 10);
+	
+	mesh = new THREE.Mesh(geometry, material);
+	
+	ship.add(mesh);
+	mesh.rotation.set(0,Math.PI/2,Math.PI/2)
+
+}
+function addShipTop(ship, material){
+	geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
+	material = new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: true});
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.rotation.set(-Math.PI, Math.PI/2, -Math.PI/2)
+	mesh.position.set(0, 5, 0);
+	ship.add(mesh);
+	geometry = new THREE.ConeGeometry(3.5,5, 10, 1, true, 0, Math.PI);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.position.set(0, 5, 7.5)
+	mesh.rotation.set(Math.PI/2, Math.PI/2,0);
+	ship.add(mesh);
+	geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
+	material = new THREE.MeshLambertMaterial({ color: 0x000000, wireframe: true});
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.rotation.x=-Math.PI/2;
+	mesh.position.set(0, 5, -5)
+	ship.add(mesh);
+	
+}
+function addShipFront(ship, material){
+	geometry = new THREE.ConeGeometry( 7, 10, 4);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.rotation.set(-Math.PI/2, Math.PI/4,0);
+	mesh.position.z=-20;
+	ship.add(mesh);
+}
+function addShipWings(ship, material){
+	/*FIX ME I'M Broken*/
+	geometry = new THREE.Geometry();
+	geometry.vertices.push( new THREE.Vector3( -10,  10, 0 ),
+							new THREE.Vector3( -10, -10, 0 ),
+							new THREE.Vector3(  10, -10, 0 )
+							);
+	geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+
+	geometry.computeFaceNormals();
+	mesh = new THREE.Mesh( geometry, material ) ;
+	mesh.rotation.x=-Math.PI/2
+	mesh.position.set( 15, 0, 0)
+	mesh.material.side=THREE.DoubleSide;
+	var mesh2= mesh.clone()
+	mesh2.rotation.y=Math.PI
+	mesh2.position.set( -15, 0, 0)
+	ship.add(mesh2);
+	ship.add(mesh);
+}
+function addShipTail(ship, material){
+	geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.position.z=17;
+	mesh.rotation.set(Math.PI,Math.PI/2,Math.PI/2)
+	ship.add(mesh);
+}
 
 
 function createAlien2(x,y,z){
@@ -138,20 +127,17 @@ function createAlien2(x,y,z){
 	var alien= new THREE.Object3D();
 	material= new THREE.MeshLambertMaterial({color: 0x00ffff,  wireframe: true});
 	var radius=20, segments=25;
-	addAlienBody(alien,material, radius, segments);
-	addAlienCockpit(alien,material, radius/2, segments);
-	
+	addAlienBody(alien, radius, segments);
+	addAlienCockpit(alien, radius/2, segments);
 
 	scene.add(alien);
-	alien.position.x = x;
-	alien.position.y = y;
-	alien.position.z = z;
+	alien.position.set(x,y,z);
 	alien.rotation.x=Math.PI/2
 	
 	
 }
 
-function addAlienCockpit(obj,material, radius, Segments){
+function addAlienCockpit(obj, radius, Segments){
 	'use strict'
 	geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 1.8, 1.6)
 	mesh= new THREE.Mesh(geometry, material)
@@ -159,18 +145,18 @@ function addAlienCockpit(obj,material, radius, Segments){
 	obj.add(mesh);
 }
 
-function addAlienBody(obj,material, radius, Segments){
+function addAlienBody(obj, radius, Segments){
 	'use strict'
 	//top
 	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 0, 0.8 )
 	mesh= new THREE.Mesh(geometry, material)
+	var mesh2=mesh.clone()
 	mesh.position.set(0,0,0)
 	obj.add(mesh);
 	//bottom
-	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 2.32, 0.8 )
-	mesh= new THREE.Mesh(geometry, material)
-	mesh.position.set(0,25,0)
-	obj.add(mesh);
+	mesh2.rotation.x=Math.PI
+	mesh2.position.set(0,25,0)
+	obj.add(mesh2);
 	//mid
 	geometry = new THREE.CylinderGeometry(radius*0.72, radius*0.72,3, Segments, 1, false, 0, 2*Math.PI)
 	mesh=new THREE.Mesh(geometry, material)
@@ -190,9 +176,7 @@ function createShield(x,y,z){
 	addShieldEdges(shield, wallDistance, wallThickness)
 	addShieldRoof(shield, wallDistance, wallThickness);
 	scene.add(shield);
-	shield.position.x = x;
-	shield.position.y = y;
-	shield.position.z = z;
+	shield.position.set(x,y,z);
 }
 
 function addShieldEdges(object, distance, wallThickness){
@@ -229,25 +213,17 @@ function addShieldRoof(object, distance, wallThickness){
 
 
 function createCamera(x,y,z){
-
 	'use strict';
-
 	camera = new THREE.OrthographicCamera(window.innerWidth/ - 4, window.innerWidth/ 4, window.innerHeight/ 4 , window.innerHeight/ - 4, 1, 1000 );
-	
-
-	camera.position.x = x;
-	camera.position.y = y;
-	camera.position.z = z;
+	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
 }
+
 
 function createCamera2(){
 	'use strict'
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
-
 	camera.position.z = 200;
-
-
 	cameraControls = new THREE.TrackballControls( camera );
 	cameraControls.target.set( 0, 0, 0 )
 }
@@ -271,8 +247,8 @@ function createShields(nshields){
 function createLight(){
 	ambientLight = new THREE.AmbientLight(0xffffff);
     scene.add(ambientLight);            
-
 /*
+
 	var spotLight = new THREE.SpotLight(0xffffff, 1, 100000, Math.PI/2, 0, 0);
 	
 	spotLight.position.set(250,100,0);
@@ -285,8 +261,8 @@ function createLight(){
 	spotLight.shadow.camera.far = 4000;
 	spotLight.shadow.camera.fov = 90;
 
-	scene.add(spotLight);*/
-
+	scene.add(spotLight);
+*/
 }
 
 function onResize(){
@@ -365,7 +341,6 @@ function updateShip(){
 
 function animate() {
 'use strict'
-
 	updateShip();
 	cameraControls.update();
 	render()
@@ -375,18 +350,13 @@ function animate() {
 
 function init(){
 	'use strict';
-	
 	renderer = new THREE.WebGLRenderer({ antialias: true });
-	
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	
+	renderer.setSize(window.innerWidth, window.innerHeight);	
 	document.body.appendChild(renderer.domElement);
 	
 	createScene();
 	//createCamera(0,100,0);
 	createCamera2();
-
-	
 
 	render();
 	window.addEventListener("resize", onResize);
