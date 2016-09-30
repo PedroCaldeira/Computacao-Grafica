@@ -362,12 +362,14 @@ function onKeyUp(e){
 	'use strict';
 	switch(e.keyCode){
 		case 37://left arrow
-			ship.userData.acceleration=0;
+			if(ship.userData.acceleration!=0.1)
+				ship.userData.acceleration=0;
 
 			break;
 
 		case 39://right arrow
-			ship.userData.acceleration=0	;
+			if(ship.userData.acceleration!=-0.1)
+				ship.userData.acceleration=0;
 			break;
 	}
 }
