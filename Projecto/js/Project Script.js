@@ -1,5 +1,5 @@
 /*global THREE*/
-
+var wireBool=true
 var camera, scene, renderer;
 var cameraControls;
 var geometry, mesh, material;
@@ -21,7 +21,7 @@ function createScene(){
 
 	createField(0, 0, 0);
 
-	createShip(0,20,130);
+	createShip(0,yLineup,130);
 
 	createAliens(7,4);
 	createShields(4);
@@ -32,7 +32,7 @@ function createField(x, y, z){
 	'use strict';
 
 	var field = new THREE.Object3D();
-	material = new THREE.MeshLambertMaterial({ color: 0x4d4d4d, wireframe: true});
+	material = new THREE.MeshLambertMaterial({ color: 0x4d4d4d, wireframe: wireBool});
 	geometry = new THREE.PlaneGeometry(VIEWSIZE, VIEWSIZE*aspectRatio);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
@@ -49,7 +49,7 @@ function createShip(x,y,z){
 
 	ship = new THREE.Object3D();
 	ship.userData = { velocity: 0, acceleration:0};
-	material = new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: true});
+	material = new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: wireBool});
 	addShipBody(ship, material);
 	addShipTop(ship, material);
 	addShipFront(ship, material);
@@ -71,7 +71,7 @@ function addShipBody(ship, material){
 }
 function addShipTop(ship, material){
 	geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
-	material = new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: true});
+	material = new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: wireBool});
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.rotation.set(-Math.PI, Math.PI/2, -Math.PI/2)
 	mesh.position.set(0, 5, 0);
@@ -82,7 +82,7 @@ function addShipTop(ship, material){
 	mesh.rotation.set(Math.PI/2, Math.PI/2,0);
 	ship.add(mesh);
 	geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
-	material = new THREE.MeshLambertMaterial({ color: 0x000000, wireframe: true});
+	material = new THREE.MeshLambertMaterial({ color: 0x000000, wireframe: wireBool});
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.rotation.x=-Math.PI/2;
 	mesh.position.set(0, 5, -5)
@@ -145,10 +145,21 @@ function addShipTail(ship, material){
 }
 
 
+function createAliens(aliensPerRow, rows){
+	var x= VIEWSIZE/(aliensPerRow+1)
+	var z= VIEWSIZE*aspectRatio/2/(rows+1)
+	for (var r=1; r<=rows; r++ ){
+		for (var a=1;a<=aliensPerRow; a++)
+			alienArray.push(createAlien2(x*a-VIEWSIZE/2, yLineup, (-VIEWSIZE*aspectRatio/2)+z*r))
+
+	}
+}
+
+
 function createAlien2(x,y,z){
 	'use strict'
 	var alien= new THREE.Object3D();
-	material= new THREE.MeshLambertMaterial({color: 0x00ffff,  wireframe: true});
+	material= new THREE.MeshLambertMaterial({color: 0x00ffff,  wireframe: wireBool});
 	var radius=20, segments=25;
 	addAlienBody(alien, radius, segments);
 	addAlienCockpit(alien, radius/2, segments);
@@ -194,7 +205,7 @@ function addAlienBody(obj, radius, Segments){
 function createShield(x,y,z){
 	'use strict';
 	var shield = new THREE.Object3D();
-	material = new THREE.MeshLambertMaterial({color:0x00ff00, wireframe:true});
+	material = new THREE.MeshLambertMaterial({color:0x00ff00, wireframe: wireBool});
 	var wallDistance=40, wallThickness=15;
 	addShieldWalls(shield,wallDistance, wallThickness);
 	addShieldEdges(shield, wallDistance, wallThickness)
@@ -241,6 +252,9 @@ function createCamera(x,y,z){
 	camera = new THREE.OrthographicCamera(-VIEWSIZE,VIEWSIZE,VIEWSIZE*aspectRatio,-VIEWSIZE*aspectRatio, 1, 1000 );
 	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
+
+	cameraControls = new THREE.TrackballControls( camera );
+	cameraControls.target.set( 0, 0, 0 )
 }
 
 
@@ -252,15 +266,7 @@ function createCamera2(){
 	cameraControls.target.set( 0, 0, 0 )
 }
 
-function createAliens(aliensPerRow, rows){
-	var x= VIEWSIZE/(aliensPerRow+1)
-	var z= VIEWSIZE*aspectRatio/2/(rows+1)
-	for (var r=1; r<=rows; r++ ){
-		for (var a=1;a<=aliensPerRow; a++)
-			alienArray.push(createAlien2(x*a-VIEWSIZE/2, yLineup, (-VIEWSIZE*aspectRatio/2)+z*r))
 
-	}
-}
 
 function createShields(nshields){
 	var x= VIEWSIZE/(nshields+1);
@@ -329,9 +335,10 @@ function onKeyDown(e){
 		case 97:
 			scene.traverse(function(node){
 				if (node instanceof THREE.Mesh) {
-					node.material.wireframe=!node.material.wireframe;
+					node.material.wireframe=!wireBool;
 				}
 			});
+			wireBool=!wireBool
 			break;
 		case 49:
 			createCamera(VIEWSIZE/2,0,0);
@@ -376,12 +383,11 @@ function onKeyUp(e){
 
 
 function updateShip(){
-	ship.userData.velocity+=ship.userData.acceleration; //aceleracao=(60)^2*aceleracao em unidades/segundo^2 e velociadade =60*unidades/segundo porque 60 frames=1segundo
+	ship.userData.velocity+=ship.userData.acceleration;
 	ship.position.x+=ship.userData.velocity;
 	ship.userData.velocity=ship.userData.velocity*0.95;//resistencia na velocidade
-	//ship.userData.acceleration=ship.userData.acceleration*0.98; //resistencia na aceleracao
-	//ship.userData.acceleration-=0.05*(ship.userData.velocity)^2 Tentei usar esta formula da Resistencia do Ar mas deu merda para quase qualquer constante
 	ship.rotation.z=-ship.userData.velocity*Math.PI*0.2;
+
 
 
 }
@@ -403,7 +409,7 @@ function init(){
 
 	createScene();
 	//createCamera(0,100,0);
-	createCamera2();
+	createCamera(0,100,0);
 	//createScenery();
 	render();
 
