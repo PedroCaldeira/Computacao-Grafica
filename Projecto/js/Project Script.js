@@ -10,6 +10,7 @@ var ship;
 var alienArray=[]
 var clock;
 var delta;
+var newPosShip;
 
 function render(){
 	'use strict';
@@ -387,7 +388,14 @@ function onKeyUp(e){
 function updateShip(){
 	delta=clock.getDelta();
 	ship.userData.velocity+=ship.userData.acceleration*delta;
-	ship.position.x+=ship.userData.velocity*delta;
+	
+	newPosShip=ship.position.x+ship.userData.velocity*delta;
+	if(newPosShip < -VIEWSIZE/2)
+		ship.position.x=-VIEWSIZE/2;
+	else if(newPosShip > VIEWSIZE/2)
+		ship.position.x=VIEWSIZE/2;
+	else
+		ship.position.x=newPosShip
 	ship.userData.velocity=ship.userData.velocity*0.95//resistencia na velocidade
 	//ship.userData.velocity=ship.userData.velocity*(delta+0.93); 
 	ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
