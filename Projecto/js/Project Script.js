@@ -385,12 +385,14 @@ function onKeyUp(e){
 
 
 function updateShip(){
-	console.log(ship.userData.velocity);
 	delta=clock.getDelta();
 	ship.userData.velocity+=ship.userData.acceleration*delta;
 	ship.position.x+=ship.userData.velocity*delta;
-	ship.userData.velocity=ship.userData.velocity*delta*58;//resistencia na velocidade
+	ship.userData.velocity=ship.userData.velocity*0.95//resistencia na velocidade
+	//ship.userData.velocity=ship.userData.velocity*(delta+0.93); 
 	ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
+	if (Math.abs(ship.userData.velocity)<3)
+		ship.userData.velocity=0;
 
 
 
