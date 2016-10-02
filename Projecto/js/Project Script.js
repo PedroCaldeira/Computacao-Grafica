@@ -8,6 +8,8 @@ var VIEWSIZE=600;
 var yLineup=30;
 var ship;
 var alienArray=[]
+var clock;
+var delta;
 
 function render(){
 	'use strict';
@@ -353,13 +355,13 @@ function onKeyDown(e){
 			createCamera2();
 			break;
 		case 37://left arrow
-			if(ship.userData.acceleration!=-0.1)
-				ship.userData.acceleration=-0.1;
+			if(ship.userData.acceleration!=-500)
+				ship.userData.acceleration=-500;
 			break;
 
 		case 39://right arrow
-			if(ship.userData.acceleration!=0.1)
-				ship.userData.acceleration=0.1;
+			if(ship.userData.acceleration!=500)
+				ship.userData.acceleration=500;
 			break;
 	}
 
@@ -369,13 +371,13 @@ function onKeyUp(e){
 	'use strict';
 	switch(e.keyCode){
 		case 37://left arrow
-			if(ship.userData.acceleration!=0.1)
+			if(ship.userData.acceleration!=500)
 				ship.userData.acceleration=0;
 
 			break;
 
 		case 39://right arrow
-			if(ship.userData.acceleration!=-0.1)
+			if(ship.userData.acceleration!=-500)
 				ship.userData.acceleration=0;
 			break;
 	}
@@ -383,10 +385,12 @@ function onKeyUp(e){
 
 
 function updateShip(){
-	ship.userData.velocity+=ship.userData.acceleration;
-	ship.position.x+=ship.userData.velocity;
-	ship.userData.velocity=ship.userData.velocity*0.95;//resistencia na velocidade
-	ship.rotation.z=-ship.userData.velocity*Math.PI*0.2;
+	console.log(ship.userData.velocity);
+	delta=clock.getDelta();
+	ship.userData.velocity+=ship.userData.acceleration*delta;
+	ship.position.x+=ship.userData.velocity*delta;
+	ship.userData.velocity=ship.userData.velocity*delta*58;//resistencia na velocidade
+	ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
 
 
 
@@ -403,6 +407,7 @@ function animate() {
 
 function init(){
 	'use strict';
+	clock= new THREE.Clock();
 	renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
