@@ -10,7 +10,6 @@ var ship;
 var alienArray=[]
 var clock;
 var delta;
-var newPosShip;
 
 function render(){
 	'use strict';
@@ -26,7 +25,7 @@ function createScene(){
 
 	createShip(0,yLineup,130);
 
-	createAliens(7,4);
+	createAliens(8,4);
 	createShields(4);
 	createLight();
 }
@@ -166,20 +165,43 @@ function createAlien2(x,y,z){
 	var radius=20, segments=25;
 	addAlienBody(alien, radius, segments);
 	addAlienCockpit(alien, radius/2, segments);
+	addAlienLandingGear(alien, radius)
 
 	scene.add(alien);
 	alien.position.set(x,y,z);
-	alien.rotation.x=Math.PI/2
-	//alien.material.wireframe=false
+	alien.rotation.x=-Math.PI/2
 	return alien
 
 }
 
+
+function addAlienLandingGear(obj, radius){
+	'use strict'
+	geometry=new THREE.CubeGeometry(8,2,2);
+	material= new THREE.MeshLambertMaterial({color: 0x00ffff,  wireframe: wireBool});
+	mesh= new THREE.Mesh(geometry, material)
+	mesh.rotation.set(0,Math.PI/4,Math.PI/4)
+	mesh.position.set(-7.5, -7,7.5)
+	obj.add(mesh)
+	var mesh2=mesh.clone()
+	mesh2.rotation.y+=Math.PI/2
+	mesh2.position.set(7.5, -7,7.5)
+	obj.add(mesh2)
+	mesh2=mesh.clone()
+	mesh2.rotation.y+=3*Math.PI
+	mesh2.position.set(7.5, -7,-7.5)
+	obj.add(mesh2)
+	mesh2=mesh.clone()
+	mesh2.rotation.y-=Math.PI/2
+	mesh2.position.set(-7.5, -7,-7.5)
+	obj.add(mesh2)
+}
+
 function addAlienCockpit(obj, radius, Segments){
 	'use strict'
-	geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 1.8, 1.6)
+	geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 5, 1.8)
 	mesh= new THREE.Mesh(geometry, material)
-	mesh.position.set(0,10,0)
+	mesh.position.set(0,2,0)
 	obj.add(mesh);
 }
 
@@ -189,16 +211,16 @@ function addAlienBody(obj, radius, Segments){
 	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 0, 0.8 )
 	mesh= new THREE.Mesh(geometry, material)
 	var mesh2=mesh.clone()
-	mesh.position.set(0,0,0)
+	mesh.position.set(0,-12.5,0)
 	obj.add(mesh);
 	//bottom
 	mesh2.rotation.x=Math.PI
-	mesh2.position.set(0,25,0)
+	mesh2.position.set(0,12.5,0)
 	obj.add(mesh2);
 	//mid
 	geometry = new THREE.CylinderGeometry(radius*0.72, radius*0.72,3, Segments, 1, false, 0, 2*Math.PI)
 	mesh=new THREE.Mesh(geometry, material)
-	mesh.position.set(0,12.5,0)
+	mesh.position.set(0,0,0)
 	obj.add(mesh)
 
 }
@@ -252,7 +274,7 @@ function addShieldRoof(object, distance, wallThickness){
 
 function createCamera(x,y,z){
 	'use strict';
-	camera = new THREE.OrthographicCamera(-VIEWSIZE,VIEWSIZE,VIEWSIZE*aspectRatio,-VIEWSIZE*aspectRatio, 1, 1000 );
+	camera = new THREE.OrthographicCamera(-VIEWSIZE/2,VIEWSIZE/2,VIEWSIZE*aspectRatio/2,-VIEWSIZE*aspectRatio/2, 1, 1000 );
 	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
 
@@ -319,10 +341,10 @@ function onResize(){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	if(window.innerWidth > 0 && window.innerHeight > 0){
 
-            camera.left = -VIEWSIZE;
-            camera.right = VIEWSIZE;
-            camera.top = VIEWSIZE*aspectRatio;
-            camera.bottom = -VIEWSIZE*aspectRatio;
+            camera.left = -VIEWSIZE/2;
+            camera.right = VIEWSIZE/2;
+            camera.top = VIEWSIZE*aspectRatio/2;
+            camera.bottom = -VIEWSIZE*aspectRatio/2;
 			camera.updateProjectionMatrix();
 	}
 
@@ -389,16 +411,19 @@ function updateShip(){
 	delta=clock.getDelta();
 	ship.userData.velocity+=ship.userData.acceleration*delta;
 	
-	newPosShip=ship.position.x+ship.userData.velocity*delta;
-	if(newPosShip < -VIEWSIZE/2)
-		ship.position.x=-VIEWSIZE/2;
-	else if(newPosShip > VIEWSIZE/2)
-		ship.position.x=VIEWSIZE/2;
+	var newPosShip=ship.position.x+ship.userData.velocity*delta;
+	if(newPosShip < -VIEWSIZE/2+25)
+		ship.position.x=-VIEWSIZE/2+25;
+	else if(newPosShip > VIEWSIZE/2-25)
+		ship.position.x=VIEWSIZE/2-25;
 	else
 		ship.position.x=newPosShip
 	ship.userData.velocity=ship.userData.velocity*0.95//resistencia na velocidade
 	//ship.userData.velocity=ship.userData.velocity*(delta+0.93); 
-	ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
+	if (Math.abs(ship.position.x)>=VIEWSIZE/2-25)
+		ship.rotation.z=ship.rotation.z*0.95;
+	else
+		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
 	if (Math.abs(ship.userData.velocity)<3)
 		ship.userData.velocity=0;
 
