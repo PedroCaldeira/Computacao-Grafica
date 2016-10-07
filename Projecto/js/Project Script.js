@@ -300,7 +300,7 @@ function addAlienBody(obj, radius, Segments){
 
 function createCamera(x,y,z){
 	'use strict';
-	camera = new THREE.OrthographicCamera(-VIEWSIZE/2,VIEWSIZE/2,VIEWSIZE*aspectRatio/2,-VIEWSIZE*aspectRatio/2, 1, 1000 );
+	camera = new THREE.OrthographicCamera(-VIEWSIZE,VIEWSIZE,VIEWSIZE*aspectRatio,-VIEWSIZE*aspectRatio, 1, 1000 );
 	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
 
@@ -515,16 +515,29 @@ function onKeyUp(e){
 
 function onResize(){
 	'use strict';
-	aspectRatio=window.innerHeight/window.innerWidth;
+	var newAspectRatio=window.innerHeight/window.innerWidth;	
+	var height=VIEWSIZE*aspectRatio;
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	if(window.innerWidth > 0 && window.innerHeight > 0){
+		if (newAspectRatio<1){		
+            camera.left = -VIEWSIZE;
+            camera.right = VIEWSIZE;
+            camera.top = VIEWSIZE*newAspectRatio;
+            camera.bottom = -VIEWSIZE*newAspectRatio;
+			
+		}
+		else{
+			camera.left = -width/newAspectRatio;
+            camera.right = width/newAspectRatio;
+            camera.top = height;
+            camera.bottom = -height;
+			
 
-            camera.left = -VIEWSIZE/2;
-            camera.right = VIEWSIZE/2;
-            camera.top = VIEWSIZE*aspectRatio/2;
-            camera.bottom = -VIEWSIZE*aspectRatio/2;
-			camera.updateProjectionMatrix();
+		}
+		camera.updateProjectionMatrix();
+		aspectRatio= newAspectRatio	
 	}
+
 
 
 
