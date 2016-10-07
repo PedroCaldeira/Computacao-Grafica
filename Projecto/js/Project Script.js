@@ -422,8 +422,8 @@ function onKeyDown(e){
 	switch (e.keyCode){
 		case 65:
 		case 97:
-			scene.traverse(function(node){
-				if (node instanceof THREE.Mesh) {
+			scene.traverse(function(node){			//we could also change the materials one by one. 
+				if (node instanceof THREE.Mesh) {	//We'd have to add every material to an array tho...
 					node.material.wireframe=!wireBool;
 				}
 			});
@@ -470,24 +470,16 @@ function onKeyUp(e){
 	}
 }
 
-/*
-*newAspectRatio
-/newAspectRatio
-*aspectRatio
-/aspectRatio
-(newAspectRatio/aspectRatio)
-(aspectRatio/newAspectRatio)
-*/
 
 function onResize(){
 	'use strict';
-	var newAspectRatio=window.innerHeight/window.innerWidth;	
+	var windowAspectRatio=window.innerHeight/window.innerWidth;	
 	var height=gameWidth*aspectRatio;
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	if(window.innerWidth > 0 && window.innerHeight > 0){
-		if (newAspectRatio<=aspectRatio){
-            camera.left = -gameWidth/(newAspectRatio/aspectRatio);
-            camera.right = gameWidth/(newAspectRatio/aspectRatio);
+		if (windowAspectRatio<=aspectRatio){
+            camera.left = -gameWidth/(windowAspectRatio/aspectRatio);
+            camera.right = gameWidth/(windowAspectRatio/aspectRatio);
             camera.top = gameWidth*aspectRatio;
             camera.bottom = -gameWidth*aspectRatio;
 			
@@ -495,13 +487,12 @@ function onResize(){
 		else{
 			camera.left = -gameWidth;
             camera.right = gameWidth;
-            camera.top = gameWidth*newAspectRatio;
-            camera.bottom = -gameWidth*newAspectRatio;
+            camera.top = gameWidth*windowAspectRatio;
+            camera.bottom = -gameWidth*windowAspectRatio;
 			
 
 		}
 		camera.updateProjectionMatrix();
-		//aspectRatio= newAspectRatio	
 	}
 }
 
