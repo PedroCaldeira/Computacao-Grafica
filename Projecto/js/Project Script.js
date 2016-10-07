@@ -3,8 +3,9 @@ var wireBool=true
 var camera, scene, renderer;
 var cameraControls;
 var geometry, mesh, material;
-var aspectRatio=window.innerHeight/window.innerWidth;
-var VIEWSIZE=600;
+var aspectRatio=300/600;
+var windowAspect= window.innerHeight/window.innerWidth
+var gameWidth=600;
 var yLineup=30;
 var ship;
 var alienArray=[]
@@ -37,7 +38,6 @@ function init(){
 	document.body.appendChild(renderer.domElement);
 
 	createScene();
-	//createCamera(0,100,0);
 	createCamera(0,100,0);
 	//createScenery();
 	render();
@@ -68,7 +68,7 @@ function createScene(){
 
 	createAliens(8,4);
 	createShields(4);
-	createLight();
+	//createLight();
 }
 /*
 ---------------------------------------------------------------------------------
@@ -81,8 +81,8 @@ function createField(x, y, z){
 	'use strict';
 
 	var field = new THREE.Object3D();
-	material = new THREE.MeshLambertMaterial({ color: 0x4d4d4d, wireframe: wireBool});
-	geometry = new THREE.PlaneGeometry(VIEWSIZE, VIEWSIZE*aspectRatio);
+	material = new THREE.MeshBasicMaterial({ color: 0x4d4d4d, wireframe: wireBool});
+	geometry = new THREE.PlaneGeometry(gameWidth, gameWidth*aspectRatio);
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, 0, 0);
 	field.add(mesh);
@@ -103,7 +103,7 @@ function createShip(x,y,z){
 
 	ship = new THREE.Object3D();
 	ship.userData = { velocity: 0, acceleration:0};
-	material = new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: wireBool});
+	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
 	addShipBody(ship, material);
 	addShipTop(ship, material);
 	addShipFront(ship, material);
@@ -128,7 +128,7 @@ function addShipTop(ship, material){
 	//adds the shield cockpit to the ship
 
 	geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
-	material = new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: wireBool});
+	material = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: wireBool});
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.rotation.set(-Math.PI, Math.PI/2, -Math.PI/2)
 	mesh.position.set(0, 5, 0);
@@ -139,7 +139,7 @@ function addShipTop(ship, material){
 	mesh.rotation.set(Math.PI/2, Math.PI/2,0);
 	ship.add(mesh);
 	geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
-	material = new THREE.MeshLambertMaterial({ color: 0x000000, wireframe: wireBool});
+	material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: wireBool});
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.rotation.x=-Math.PI/2;
 	mesh.position.set(0, 5, -5)
@@ -155,6 +155,7 @@ function addShipFront(ship, material){
 	mesh.position.z=-20;
 	ship.add(mesh);
 }
+
 function addShipWings(ship, material){
 	//adds both wings to the ship
 	geometry = new THREE.Geometry();
@@ -168,7 +169,7 @@ function addShipWings(ship, material){
 	geometry.faces.push( new THREE.Face3( 2, 3, 4 ) );
 	geometry.faces.push( new THREE.Face3( 2, 1, 4 ) );
 
-	geometry.computeFaceNormals();
+
 	mesh = new THREE.Mesh( geometry, material ) ;
 	mesh.rotation.x=-Math.PI/2
 	mesh.position.set( 15, 0, 0)
@@ -217,11 +218,11 @@ function addShipTail(ship, material){
 
 function createAliens(aliensPerRow, rows){
 	//calculates the place of every alien and orders its construction
-	var x= VIEWSIZE/(aliensPerRow+1)
-	var z= VIEWSIZE*aspectRatio/2/(rows+1)
+	var x= gameWidth/(aliensPerRow+1)
+	var z= gameWidth*aspectRatio/2/(rows+1)
 	for (var r=1; r<=rows; r++ ){
 		for (var a=1;a<=aliensPerRow; a++)
-			alienArray.push(createAlien2(x*a-VIEWSIZE/2, yLineup, (-VIEWSIZE*aspectRatio/2)+z*r))
+			alienArray.push(createAlien2(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r))
 
 	}
 }
@@ -229,7 +230,7 @@ function createAliens(aliensPerRow, rows){
 function createAlien2(x,y,z){
 	'use strict'
 	var alien= new THREE.Object3D();
-	material= new THREE.MeshLambertMaterial({color: 0x00ffff,  wireframe: wireBool});
+	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe: wireBool});
 	var radius=20, segments=25;
 	addAlienBody(alien, radius, segments);
 	addAlienCockpit(alien, radius/2, segments);
@@ -246,7 +247,7 @@ function createAlien2(x,y,z){
 function addAlienLandingGear(obj, radius){
 	'use strict'
 	geometry=new THREE.CubeGeometry(8,2,2);
-	material= new THREE.MeshLambertMaterial({color: 0x00ffff,  wireframe: wireBool});
+	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe: wireBool});
 	mesh= new THREE.Mesh(geometry, material)
 	mesh.rotation.set(0,Math.PI/4,Math.PI/4)
 	mesh.position.set(-7.5, -7,7.5)
@@ -300,7 +301,7 @@ function addAlienBody(obj, radius, Segments){
 
 function createCamera(x,y,z){
 	'use strict';
-	camera = new THREE.OrthographicCamera(-VIEWSIZE,VIEWSIZE,VIEWSIZE*aspectRatio,-VIEWSIZE*aspectRatio, 1, 1000 );
+	camera = new THREE.OrthographicCamera(-gameWidth,gameWidth,gameWidth*windowAspect,-gameWidth*windowAspect, 1, 1000 );
 	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
 
@@ -310,6 +311,7 @@ function createCamera(x,y,z){
 
 
 function createCamera2(){
+	//auxiliary camera for modelling purposes, must be activated by the user
 	'use strict'
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
 	camera.position.z = 200;
@@ -325,16 +327,16 @@ function createCamera2(){
 */
 
 function createShields(nshields){
-	var x= VIEWSIZE/(nshields+1);
+	var x= gameWidth/(nshields+1);
 	for (var a=1;a<=nshields; a++)
-		createShield(x*a-VIEWSIZE/2, yLineup, 70);
+		createShield(x*a-gameWidth/2, yLineup, 70);
 }
 
 
 function createShield(x,y,z){
 	'use strict';
 	var shield = new THREE.Object3D();
-	material = new THREE.MeshLambertMaterial({color:0x00ff00, wireframe: wireBool});
+	material = new THREE.MeshBasicMaterial({color:0x00ff00, wireframe: wireBool});
 	var wallDistance=40, wallThickness=15;
 	addShieldWalls(shield,wallDistance, wallThickness);
 	addShieldEdges(shield, wallDistance, wallThickness)
@@ -376,49 +378,6 @@ function addShieldRoof(object, distance, wallThickness){
 	object.add(mesh)
 }
 
-/*
-function createScenery(){
-	var texture=THREE.ImageUtils.loadTexture("./stars.jpg");
-	texture.wrapS=THREE.RepeatWrapping;
-	texture.wrapT=THREE.RepeatWrapping;
-	texture.repeat.set(6,6);
-	material=new THREE.MeshLambertMaterial({map : texture, color : 0xffffff, wireframe: true });
-	var world = new THREE.Mesh(new THREE.SphereGeometry(800, 64,64 ), material);
-	world.material.side =THREE.DoubleSide;
-
-	scene.add(world)
-
-}
-*/
-
-
-/*
----------------------------------------------------------------------------------
-								Lighting
----------------------------------------------------------------------------------
-*/
-function createLight(){
-	ambientLight = new THREE.AmbientLight(0xffffff);
-    scene.add(ambientLight);
-/*
-
-	var spotLight = new THREE.SpotLight(0xffffff, 1, 100000, Math.PI/2, 0, 0);
-
-	spotLight.position.set(250,100,0);
-	spotLight.castShadow = true;
-
-	spotLight.shadow.mapSize.width = 1024;
-	spotLight.shadow.mapSize.height = 1024;
-
-	spotLight.shadow.camera.near = 500;
-	spotLight.shadow.camera.far = 4000;
-	spotLight.shadow.camera.fov = 90;
-
-	scene.add(spotLight);
-*/
-}
-
-
 
 /*
 ---------------------------------------------------------------------------------
@@ -431,15 +390,15 @@ function updateShip(){
 	ship.userData.velocity+=ship.userData.acceleration*delta;
 	
 	var newPosShip=ship.position.x+ship.userData.velocity*delta;
-	if(newPosShip < -VIEWSIZE/2+25)
-		ship.position.x=-VIEWSIZE/2+25;
-	else if(newPosShip > VIEWSIZE/2-25)
-		ship.position.x=VIEWSIZE/2-25;
+	if(newPosShip < -gameWidth/2+25)
+		ship.position.x=-gameWidth/2+25;
+	else if(newPosShip > gameWidth/2-25)
+		ship.position.x=gameWidth/2-25;
 	else
 		ship.position.x=newPosShip
 	ship.userData.velocity=ship.userData.velocity*0.95//resistencia na velocidade
 	//ship.userData.velocity=ship.userData.velocity*(delta+0.93); 
-	if (Math.abs(ship.position.x)>=VIEWSIZE/2-25)
+	if (Math.abs(ship.position.x)>=gameWidth/2-25)
 		ship.rotation.z=ship.rotation.z*0.95;
 	else
 		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
@@ -471,13 +430,13 @@ function onKeyDown(e){
 			wireBool=!wireBool
 			break;
 		case 49:
-			createCamera(VIEWSIZE/2,0,0);
+			createCamera(gameWidth/2,0,0);
 			break;
 		case 50:
 			createCamera(0,100,0);
 			break;
 		case 51:
-			createCamera(0,0, VIEWSIZE*aspectRatio/2);
+			createCamera(0,0, gameWidth*aspectRatio/2);
 			break;
 		case 52:
 			createCamera2();
@@ -511,34 +470,85 @@ function onKeyUp(e){
 	}
 }
 
-
+/*
+*newAspectRatio
+/newAspectRatio
+*aspectRatio
+/aspectRatio
+(newAspectRatio/aspectRatio)
+(aspectRatio/newAspectRatio)
+*/
 
 function onResize(){
 	'use strict';
 	var newAspectRatio=window.innerHeight/window.innerWidth;	
-	var height=VIEWSIZE*aspectRatio;
+	var height=gameWidth*aspectRatio;
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	if(window.innerWidth > 0 && window.innerHeight > 0){
-		if (newAspectRatio<1){		
-            camera.left = -VIEWSIZE;
-            camera.right = VIEWSIZE;
-            camera.top = VIEWSIZE*newAspectRatio;
-            camera.bottom = -VIEWSIZE*newAspectRatio;
+		if (newAspectRatio<=aspectRatio){
+            camera.left = -gameWidth/(newAspectRatio/aspectRatio);
+            camera.right = gameWidth/(newAspectRatio/aspectRatio);
+            camera.top = gameWidth*aspectRatio;
+            camera.bottom = -gameWidth*aspectRatio;
 			
 		}
 		else{
-			camera.left = -width/newAspectRatio;
-            camera.right = width/newAspectRatio;
-            camera.top = height;
-            camera.bottom = -height;
+			camera.left = -gameWidth;
+            camera.right = gameWidth;
+            camera.top = gameWidth*newAspectRatio;
+            camera.bottom = -gameWidth*newAspectRatio;
 			
 
 		}
 		camera.updateProjectionMatrix();
-		aspectRatio= newAspectRatio	
+		//aspectRatio= newAspectRatio	
 	}
+}
 
 
+/*
+---------------------------------------------------------------------------------
+							Extra (nao é para a 1a entrega)
+---------------------------------------------------------------------------------
 
+
+/*
+---------------------------------------------------------------------------------
+								Lighting
+---------------------------------------------------------------------------------
+
+function createLight(){
+	ambientLight = new THREE.AmbientLight(0xffffff);
+    scene.add(ambientLight);
+/*
+
+	var spotLight = new THREE.SpotLight(0xffffff, 1, 100000, Math.PI/2, 0, 0);
+
+	spotLight.position.set(250,100,0);
+	spotLight.castShadow = true;
+
+	spotLight.shadow.mapSize.width = 1024;
+	spotLight.shadow.mapSize.height = 1024;
+
+	spotLight.shadow.camera.near = 500;
+	spotLight.shadow.camera.far = 4000;
+	spotLight.shadow.camera.fov = 90;
+
+	scene.add(spotLight);
+	}
+*/
+
+/*
+function createScenery(){
+	var texture=THREE.ImageUtils.loadTexture("./stars.jpg");
+	texture.wrapS=THREE.RepeatWrapping;
+	texture.wrapT=THREE.RepeatWrapping;
+	texture.repeat.set(6,6);
+	material=new THREE.MeshBasicMaterial({map : texture, color : 0xffffff, wireframe: true });
+	var world = new THREE.Mesh(new THREE.SphereGeometry(800, 64,64 ), material);
+	world.material.side =THREE.DoubleSide;
+
+	scene.add(world)
 
 }
+*/
