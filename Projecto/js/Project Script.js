@@ -474,7 +474,6 @@ function onKeyUp(e){
 function onResize(){
 	'use strict';
 	var windowAspectRatio=window.innerHeight/window.innerWidth;	
-	var height=gameWidth*aspectRatio;
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	if(window.innerWidth > 0 && window.innerHeight > 0){
 		if (windowAspectRatio<=aspectRatio){
