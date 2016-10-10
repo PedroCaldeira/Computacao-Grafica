@@ -3,7 +3,7 @@ var wireBool=true
 var camera, scene, renderer;
 var cameraControls;
 var geometry, mesh, material;
-var aspectRatio=300/600;
+var aspectRatio=400/600;
 var windowAspect= window.innerHeight/window.innerWidth
 var gameWidth=600;
 var yLineup=30;
@@ -301,7 +301,16 @@ function addAlienBody(obj, radius, Segments){
 
 function createCamera(x,y,z){
 	'use strict';
-	camera = new THREE.OrthographicCamera(-gameWidth,gameWidth,gameWidth*windowAspect,-gameWidth*windowAspect, 1, 1000 );
+	var windowAspectRatio=window.innerHeight/window.innerWidth;	
+	if(windowAspectRatio>aspectRatio){
+		camera = new THREE.OrthographicCamera(-gameWidth,gameWidth,gameWidth*windowAspectRatio,-gameWidth*windowAspectRatio, 1, 1000 );
+		console.log("if")
+	}
+	else{
+		console.log(-gameWidth/(windowAspectRatio/aspectRatio))
+		camera = new THREE.OrthographicCamera(-gameWidth/(windowAspectRatio/aspectRatio),gameWidth/(windowAspectRatio/aspectRatio),gameWidth*aspectRatio,-gameWidth*aspectRatio, 1, 1000 );
+		console.log("else")
+	}
 	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
 
@@ -477,13 +486,16 @@ function onResize(){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	if(window.innerWidth > 0 && window.innerHeight > 0){
 		if (windowAspectRatio<=aspectRatio){
-            camera.left = -gameWidth/(windowAspectRatio/aspectRatio);
+			console.log("if")
+            console.log(-gameWidth/(windowAspectRatio/aspectRatio))
+			camera.left = -gameWidth/(windowAspectRatio/aspectRatio);
             camera.right = gameWidth/(windowAspectRatio/aspectRatio);
             camera.top = gameWidth*aspectRatio;
             camera.bottom = -gameWidth*aspectRatio;
 			
 		}
 		else{
+			console.log("else")
 			camera.left = -gameWidth;
             camera.right = gameWidth;
             camera.top = gameWidth*windowAspectRatio;
