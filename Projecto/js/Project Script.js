@@ -4,7 +4,6 @@ var camera, scene, renderer;
 var cameraControls;
 var geometry, mesh, material;
 var aspectRatio=400/600;
-var windowAspect= window.innerHeight/window.innerWidth
 var gameWidth=600;
 var yLineup=30;
 var ship;
