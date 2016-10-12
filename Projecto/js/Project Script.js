@@ -1,11 +1,11 @@
 /*global THREE*/
 var wireBool=true
 var camera, scene, renderer;
-var cameraControls;
+//var cameraControls;
 var geometry, mesh, material;
 var aspectRatio=400/600;
 var gameWidth=600;
-var yLineup=30;
+var yLineup=30; //height of floating stuff above the field
 var ship;
 var alienArray=[]
 var clock;
@@ -22,7 +22,7 @@ function animate() {
 	//animation function
 	'use strict'
 	updateShip();
-	cameraControls.update();
+//	cameraControls.update();
 	render()
 	requestAnimationFrame(animate);
 
@@ -62,11 +62,15 @@ function createScene(){
 	scene.add(new THREE.AxisHelper(10));
 
 	createField(0, 0, 0);
+	
+	//Don't know if we should create them here or within the createField
+	//Did what made more sense to me
+	
+	//createShip(0,yLineup,130);
 
-	createShip(0,yLineup,130);
-
-	createAliens(8,4);
-	createShields(4);
+	//createAliens(8,4);
+	//createShields(4);
+	
 	//createLight();
 }
 /*
@@ -76,18 +80,28 @@ function createScene(){
 */
 
 function createField(x, y, z){
-	//creates a plane that represents de playing field 
+	//creates a plane that represents "de" playing field 
 	'use strict';
-
+	
+	
 	var field = new THREE.Object3D();
+	
 	material = new THREE.MeshBasicMaterial({ color: 0x4d4d4d, wireframe: wireBool});
 	geometry = new THREE.PlaneGeometry(gameWidth, gameWidth*aspectRatio);
+	
 	mesh = new THREE.Mesh(geometry, material);
-	mesh.position.set(0, 0, 0);
+	mesh.position.set(0, 0, 0);// field centered
+	
 	field.add(mesh);
-	field.rotation.x=Math.PI/2
 	scene.add(field);
+	//so it gets perpendicular to y axis
+	field.rotation.x= Math.PI/2;
 	field.position.set(x,y,z);
+	
+	createShip(0,yLineup,130);
+	createAliens(8,4);
+	createShields(4);
+	
 
 }
 
@@ -102,60 +116,73 @@ function createShip(x,y,z){
 
 	ship = new THREE.Object3D();
 	ship.userData = { velocity: 0, acceleration:0};
-	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-	addShipBody(ship, material);
-	addShipTop(ship, material);
-	addShipFront(ship, material);
-	addShipWings(ship, material);
-	addShipTail(ship, material);
-	addFancyStabilizers(ship);
+	
+	addShipBody(ship);
+	addShipTop(ship);
+	addShipFront(ship);
+	addShipWings(ship);
+	addShipTail(ship);
+	//addFancyStabilizers(ship);
+	
 	scene.add(ship);
 	ship.position.set(x,y,z);
 }
 
-function addShipBody(ship, material){
+function addShipBody(ship){
 	//adds the ship body to the ship
-	geometry = new THREE.BoxGeometry( 10, 30, 10);
-
+	geometry = new THREE.BoxGeometry( 10, 10, 30);
+	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
+	
 	mesh = new THREE.Mesh(geometry, material);
 
 	ship.add(mesh);
-	mesh.rotation.set(0,Math.PI/2,Math.PI/2)
 
 }
-function addShipTop(ship, material){
+
+function addShipTop(ship){
 	//adds the shield cockpit to the ship
 
 	geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
 	material = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: wireBool});
 	mesh = new THREE.Mesh(geometry, material);
+	
 	mesh.rotation.set(-Math.PI, Math.PI/2, -Math.PI/2)
 	mesh.position.set(0, 5, 0);
+	
 	ship.add(mesh);
+	
 	geometry = new THREE.ConeGeometry(3.5,5, 10, 1, true, 0, Math.PI);
 	mesh = new THREE.Mesh(geometry, material);
+	
 	mesh.position.set(0, 5, 7.5)
 	mesh.rotation.set(Math.PI/2, Math.PI/2,0);
+	
 	ship.add(mesh);
+	
 	geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
-	material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: wireBool});
+	material = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, wireframe: wireBool});
 	mesh = new THREE.Mesh(geometry, material);
+	
 	mesh.rotation.x=-Math.PI/2;
 	mesh.position.set(0, 5, -5)
+	
 	ship.add(mesh);
 
 }
 
-function addShipFront(ship, material){
+function addShipFront(ship){
 	//adds an aerodynamic front to the ship
 	geometry = new THREE.ConeGeometry( 7, 10, 4);
+	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
+	
 	mesh = new THREE.Mesh(geometry, material);
 	mesh.rotation.set(-Math.PI/2, Math.PI/4,0);
 	mesh.position.z=-20;
+	
 	ship.add(mesh);
 }
 
-function addShipWings(ship, material){
+function addShipWings(ship){
 	//adds both wings to the ship
 	geometry = new THREE.Geometry();
 	geometry.vertices.push( new THREE.Vector3( -10,  10, 0 ),
@@ -168,11 +195,13 @@ function addShipWings(ship, material){
 	geometry.faces.push( new THREE.Face3( 2, 3, 4 ) );
 	geometry.faces.push( new THREE.Face3( 2, 1, 4 ) );
 
-
+	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
+	
 	mesh = new THREE.Mesh( geometry, material ) ;
 	mesh.rotation.x=-Math.PI/2
 	mesh.position.set( 15, 0, 0)
 	mesh.material.side=THREE.DoubleSide;
+	
 	var mesh2= mesh.clone()
 	mesh2.rotation.y=Math.PI
 	mesh2.position.set( -15, 0, 0)
@@ -180,7 +209,7 @@ function addShipWings(ship, material){
 	ship.add(mesh);
 }
 
-function addFancyStabilizers(ship){
+/*function addFancyStabilizers(ship){
 	//adds an ornament to the ship's wings
 	geometry = new THREE.Geometry();
 	geometry.vertices.push( new THREE.Vector3(  20, 2, 10 ),
@@ -188,20 +217,31 @@ function addFancyStabilizers(ship){
 							new THREE.Vector3(  20, 0, 10));
 
 	geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+	
+	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
+	
 	mesh = new THREE.Mesh( geometry, material ) ;
 	mesh.material.side=THREE.DoubleSide;
 	var mesh2= mesh.clone()
+	
 	mesh2.position.x-=40
+	
 	ship.add(mesh);
+	
 	ship.add(mesh2);
-}
+}*/
 
-function addShipTail(ship, material){
+function addShipTail(ship){
 	//adds a booster to the ship
+	
 	geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
+	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
+	
 	mesh = new THREE.Mesh(geometry, material);
+	
 	mesh.position.z=17;
 	mesh.rotation.set(Math.PI,Math.PI/2,Math.PI/2)
+	
 	ship.add(mesh);
 }
 
@@ -301,31 +341,30 @@ function addAlienBody(obj, radius, Segments){
 function createCamera(x,y,z){
 	'use strict';
 	var windowAspectRatio=window.innerHeight/window.innerWidth;	
+	
+	//if window height is thiner than the field aspect ratio or something that I can't express
 	if(windowAspectRatio>aspectRatio){
 		camera = new THREE.OrthographicCamera(-gameWidth,gameWidth,gameWidth*windowAspectRatio,-gameWidth*windowAspectRatio, 1, 1000 );
-		console.log("if")
 	}
 	else{
-		console.log(-gameWidth/(windowAspectRatio/aspectRatio))
 		camera = new THREE.OrthographicCamera(-gameWidth/(windowAspectRatio/aspectRatio),gameWidth/(windowAspectRatio/aspectRatio),gameWidth*aspectRatio,-gameWidth*aspectRatio, 1, 1000 );
-		console.log("else")
 	}
 	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
 
-	cameraControls = new THREE.TrackballControls( camera );
-	cameraControls.target.set( 0, 0, 0 )
+	/*cameraControls = new THREE.TrackballControls( camera );
+	cameraControls.target.set( 0, 0, 0 )*/
 }
 
 
-function createCamera2(){
+/*function createCamera2(){
 	//auxiliary camera for modelling purposes, must be activated by the user
 	'use strict'
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
 	camera.position.z = 200;
 	cameraControls = new THREE.TrackballControls( camera );
 	cameraControls.target.set( 0, 0, 0 )
-}
+}*/
 
 
 /*
@@ -395,21 +434,29 @@ function addShieldRoof(object, distance, wallThickness){
 
 function updateShip(){
 	delta=clock.getDelta();
+	//new velocity ( v = v + at )
 	ship.userData.velocity+=ship.userData.acceleration*delta;
-	
+	//new position (x= x0 + vt )
 	var newPosShip=ship.position.x+ship.userData.velocity*delta;
+	
+	//Field limits check
 	if(newPosShip < -gameWidth/2+25)
 		ship.position.x=-gameWidth/2+25;
 	else if(newPosShip > gameWidth/2-25)
 		ship.position.x=gameWidth/2-25;
 	else
 		ship.position.x=newPosShip
-	ship.userData.velocity=ship.userData.velocity*0.95//resistencia na velocidade
-	//ship.userData.velocity=ship.userData.velocity*(delta+0.93); 
+	
+	//"air" resistance for terminal speed
+	ship.userData.velocity=ship.userData.velocity*0.95
+	//ship.userData.velocity=ship.userData.velocity*(delta+0.93);
+	
+	//cute thing for ship rotation
 	if (Math.abs(ship.position.x)>=gameWidth/2-25)
 		ship.rotation.z=ship.rotation.z*0.95;
 	else
 		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
+	
 	if (Math.abs(ship.userData.velocity)<3)
 		ship.userData.velocity=0;
 
@@ -428,32 +475,39 @@ function onKeyDown(e){
 	'use strict';
 	console.log(e.keyCode);
 	switch (e.keyCode){
+		
 		case 65:
-		case 97:
+		case 97://pressed "A/a" toggled wireframes
 			scene.traverse(function(node){			//we could also change the materials one by one. 
-				if (node instanceof THREE.Mesh) {	//We'd have to add every material to an array tho...
-					node.material.wireframe=!wireBool;
+				if (node instanceof THREE.Mesh) {	//We'd have to add every material to an array tho... 
+					node.material.wireframe=!wireBool;//PEDRO: MAY BE NECESSARY FOR COLLISIONS, DON'T KNOW YET
 				}
 			});
 			wireBool=!wireBool
 			break;
-		case 49:
+			
+		
+		case 49: //pressed "1" Change camera
 			createCamera(gameWidth/2,0,0);
 			break;
-		case 50:
+			
+			
+		case 50://pressed "2" Change camera (default camera)
 			createCamera(0,100,0);
 			break;
-		case 51:
+			
+			
+		case 51://pressed "3" Change camera
 			createCamera(0,0, gameWidth*aspectRatio/2);
 			break;
-		case 52:
-			createCamera2();
-			break;
+			
+			
 		case 37://left arrow
 			if(ship.userData.acceleration!=-500)
 				ship.userData.acceleration=-500;
 			break;
 
+			
 		case 39://right arrow
 			if(ship.userData.acceleration!=500)
 				ship.userData.acceleration=500;
@@ -481,11 +535,14 @@ function onKeyUp(e){
 
 function onResize(){
 	'use strict';
+	
 	var windowAspectRatio=window.innerHeight/window.innerWidth;	
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	if(window.innerWidth > 0 && window.innerHeight > 0){
+	
+	if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
+		
+		//if window height is thiner than the field aspect ratio
 		if (windowAspectRatio<=aspectRatio){
-			console.log("if")
             console.log(-gameWidth/(windowAspectRatio/aspectRatio))
 			camera.left = -gameWidth/(windowAspectRatio/aspectRatio);
             camera.right = gameWidth/(windowAspectRatio/aspectRatio);
@@ -493,8 +550,8 @@ function onResize(){
             camera.bottom = -gameWidth*aspectRatio;
 			
 		}
+		//otherwise
 		else{
-			console.log("else")
 			camera.left = -gameWidth;
             camera.right = gameWidth;
             camera.top = gameWidth*windowAspectRatio;
