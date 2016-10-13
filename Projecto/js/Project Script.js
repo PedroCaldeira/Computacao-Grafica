@@ -3,8 +3,9 @@ var wireBool=true
 var camera, scene, renderer;
 //var cameraControls;
 var geometry, mesh, material;
-var aspectRatio=400/600;
+var gameHeight=400;
 var gameWidth=600;
+var aspectRatio=gameHeight/gameWidth;
 var yLineup=30; //height of floating stuff above the field
 var ship;
 var alienArray=[]
@@ -344,10 +345,10 @@ function createCamera(x,y,z){
 	
 	//if window height is thiner than the field aspect ratio or something that I can't express
 	if(windowAspectRatio>aspectRatio){
-		camera = new THREE.OrthographicCamera(-gameWidth,gameWidth,gameWidth*windowAspectRatio,-gameWidth*windowAspectRatio, 1, 1000 );
+		camera = new THREE.OrthographicCamera(-gameWidth/1.5,gameWidth/1.5,gameWidth*windowAspectRatio/1.5,-gameWidth*windowAspectRatio/1.5, 1, 1000 );
 	}
 	else{
-		camera = new THREE.OrthographicCamera(-gameWidth/(windowAspectRatio/aspectRatio),gameWidth/(windowAspectRatio/aspectRatio),gameWidth*aspectRatio,-gameWidth*aspectRatio, 1, 1000 );
+		camera = new THREE.OrthographicCamera(-gameHeight/windowAspectRatio/1.5,gameHeight/windowAspectRatio/1.5,gameHeight/1.5,-gameHeight/1.5, 1, 1000 );
 	}
 	camera.position.set(x,y,z);
 	camera.lookAt(scene.position);
@@ -543,19 +544,18 @@ function onResize(){
 		
 		//if window height is thiner than the field aspect ratio
 		if (windowAspectRatio<=aspectRatio){
-            console.log(-gameWidth/(windowAspectRatio/aspectRatio))
-			camera.left = -gameWidth/(windowAspectRatio/aspectRatio);
-            camera.right = gameWidth/(windowAspectRatio/aspectRatio);
-            camera.top = gameWidth*aspectRatio;
-            camera.bottom = -gameWidth*aspectRatio;
+			camera.left = -gameHeight/windowAspectRatio/1.5;
+            camera.right = gameHeight/windowAspectRatio/1.5;;
+            camera.top = gameHeight/1.5;
+            camera.bottom = -gameHeight /1.5;
 			
 		}
 		//otherwise
 		else{
-			camera.left = -gameWidth;
-            camera.right = gameWidth;
-            camera.top = gameWidth*windowAspectRatio;
-            camera.bottom = -gameWidth*windowAspectRatio;
+			camera.left = -gameWidth/1.5;
+            camera.right = gameWidth/1.5;
+            camera.top = gameWidth*windowAspectRatio/1.5;
+            camera.bottom = -gameWidth*windowAspectRatio/1.5;
 			
 
 		}
