@@ -270,11 +270,11 @@ function createAliens(aliensPerRow, rows){
 function createAlien2(x,y,z){
 	'use strict'
 	var alien= new THREE.Object3D();
-	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe: wireBool});
+	material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
 	var radius=20, segments=25;
 	addAlienBody(alien, radius, segments);
 	addAlienCockpit(alien, radius/2, segments);
-	addAlienLandingGear(alien, radius)
+	//addAlienLandingGear(alien, radius)
 
 	scene.add(alien);
 	alien.position.set(x,y,z);
