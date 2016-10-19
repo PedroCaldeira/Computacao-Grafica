@@ -11,6 +11,7 @@ var ship;
 var alienArray=[]
 var clock;
 var delta;
+var followingCamera
 
 
 
@@ -38,6 +39,7 @@ function init(){
 	document.body.appendChild(renderer.domElement);
 
 	createScene();
+	createFollowingCamera(90,2,25,600,ship);
 	createCamera(0,100,0);
 	//createScenery();
 	render();
@@ -364,10 +366,9 @@ function createPerspectiveCamera(fov,ratio,near,far){
 }
 
 function createFollowingCamera(fov,ratio,near,far,object){
-	camera = new THREE.PerspectiveCamera(fov,ratio,near,far);
-	object.add(camera);
-	camera.position.set(0,0,0);
-	camera.lookAt(scene.position);
+	followingCamera = new THREE.PerspectiveCamera(fov,ratio,near,far);
+	followingCamera.position.set(0,ship.position.y+40,ship.position.z+40);
+	followingCamera.lookAt(scene.position);
 }
 
 /*function createCamera2(){
@@ -469,6 +470,8 @@ function updateShip(){
 		ship.rotation.z=ship.rotation.z*0.95;
 	else
 		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
+	
+	followingCamera.position.x=ship.position.x
 
 	if (Math.abs(ship.userData.velocity)<3)
 		ship.userData.velocity=0;
@@ -511,7 +514,7 @@ function onKeyDown(e){
 
 
 		case 51://pressed "3" Change camera
-			createFollowingCamera(90,2,25,600,ship);
+			camera=followingCamera
 			break;
 
 
