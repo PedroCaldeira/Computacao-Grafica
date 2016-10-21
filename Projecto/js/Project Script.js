@@ -65,7 +65,6 @@ function createScene(){
 	scene.add(new THREE.AxisHelper(10));
 
 	createField(0, 0, 0);
-	ship.add(new THREE.AxisHelper(30))
 	//Don't know if we should create them here or within the createField
 	//Did what made more sense to me
 
@@ -101,7 +100,8 @@ function createField(x, y, z){
 	field.rotation.x= Math.PI/2;
 	field.position.set(x,y,z);
 
-	createShip(0,yLineup,130);
+	ship=new spaceShip(1,yLineup, 130)
+	//createShip(0,yLineup,130);
 	createAliens(8,4);
 	createShields(4);
 
@@ -113,6 +113,7 @@ function createField(x, y, z){
 									Ship Creation
 ---------------------------------------------------------------------------------
 */
+/*
 function createShip(x,y,z){
 	//main function for the creation of the ship
 	'use strict';
@@ -212,7 +213,7 @@ function addShipWings(ship){
 	ship.add(mesh);
 }
 
-/*function addFancyStabilizers(ship){
+function addFancyStabilizers(ship){
 	//adds an ornament to the ship's wings
 	geometry = new THREE.Geometry();
 	geometry.vertices.push( new THREE.Vector3(  20, 2, 10 ),
@@ -232,7 +233,7 @@ function addShipWings(ship){
 	ship.add(mesh);
 
 	ship.add(mesh2);
-}*/
+}
 
 function addShipTail(ship){
 	//adds a booster to the ship
@@ -246,7 +247,7 @@ function addShipTail(ship){
 	mesh.rotation.set(Math.PI,Math.PI/2,Math.PI/2)
 
 	ship.add(mesh);
-}
+}*/
 
 //---------------------------------------------------------------------------------
 
@@ -265,79 +266,13 @@ function createAliens(aliensPerRow, rows){
 	material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
 
 	for (var r=1; r<=rows; r++ ){
-		for (var a=1;a<=aliensPerRow; a++)
-			alienArray.push(createAlien2(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r))
+		for (var a=1;a<=aliensPerRow; a++){
+			alienArray.push(new Alien(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r, material))
+			//alienArray.push(createAlien2(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r))
+		}
 
 	}
 }
-
-function createAlien2(x,y,z){
-	'use strict'
-	var alien= new THREE.Object3D();
-	var radius=20, segments=25;
-	addAlienBody(alien, radius, segments);
-	addAlienCockpit(alien, radius/2, segments);
-	//addAlienLandingGear(alien, radius)
-
-	scene.add(alien);
-	alien.position.set(x,y,z);
-	alien.rotation.x=-Math.PI/2
-	return alien
-
-}
-
-
-function addAlienLandingGear(obj, radius){
-	'use strict'
-	geometry=new THREE.CubeGeometry(8,2,2);
-	material= new THREE.MeshBasicMaterial({color: 0x00ffff,  wireframe: wireBool});
-	mesh= new THREE.Mesh(geometry, material)
-	mesh.rotation.set(0,Math.PI/4,Math.PI/4)
-	mesh.position.set(-7.5, -7,7.5)
-	obj.add(mesh)
-	var mesh2=mesh.clone()
-	mesh2.rotation.y+=Math.PI/2
-	mesh2.position.set(7.5, -7,7.5)
-	obj.add(mesh2)
-	mesh2=mesh.clone()
-	mesh2.rotation.y+=3*Math.PI
-	mesh2.position.set(7.5, -7,-7.5)
-	obj.add(mesh2)
-	mesh2=mesh.clone()
-	mesh2.rotation.y-=Math.PI/2
-	mesh2.position.set(-7.5, -7,-7.5)
-	obj.add(mesh2)
-}
-
-function addAlienCockpit(obj, radius, Segments){
-	'use strict'
-	geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 5, 1.8)
-	mesh= new THREE.Mesh(geometry, material)
-	mesh.position.set(0,2,0)
-	obj.add(mesh);
-}
-
-function addAlienBody(obj, radius, Segments){
-	'use strict'
-	//top
-	geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 0, 0.8 )
-	mesh= new THREE.Mesh(geometry, material)
-	var mesh2=mesh.clone()
-	mesh.position.set(0,-12.5,0)
-	obj.add(mesh);
-	//bottom
-	mesh2.rotation.x=Math.PI
-	mesh2.position.set(0,12.5,0)
-	obj.add(mesh2);
-	//mid
-	geometry = new THREE.CylinderGeometry(radius*0.72, radius*0.72,3, Segments, 1, false, 0, 2*Math.PI)
-	mesh=new THREE.Mesh(geometry, material)
-	mesh.position.set(0,0,0)
-	obj.add(mesh)
-
-}
-
-
 
 
 
