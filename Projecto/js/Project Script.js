@@ -65,7 +65,7 @@ function createScene(){
 	scene.add(new THREE.AxisHelper(10));
 
 	createField(0, 0, 0);
-
+	ship.add(new THREE.AxisHelper(30))
 	//Don't know if we should create them here or within the createField
 	//Did what made more sense to me
 
@@ -262,6 +262,8 @@ function createAliens(aliensPerRow, rows){
 	//calculates the place of every alien and orders its construction
 	var x= gameWidth/(aliensPerRow+1)
 	var z= gameWidth*aspectRatio/2/(rows+1)
+	material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
+
 	for (var r=1; r<=rows; r++ ){
 		for (var a=1;a<=aliensPerRow; a++)
 			alienArray.push(createAlien2(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r))
@@ -272,7 +274,6 @@ function createAliens(aliensPerRow, rows){
 function createAlien2(x,y,z){
 	'use strict'
 	var alien= new THREE.Object3D();
-	material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
 	var radius=20, segments=25;
 	addAlienBody(alien, radius, segments);
 	addAlienCockpit(alien, radius/2, segments);
@@ -367,8 +368,9 @@ function createPerspectiveCamera(fov,ratio,near,far){
 
 function createFollowingCamera(fov,ratio,near,far,object){
 	followingCamera = new THREE.PerspectiveCamera(fov,ratio,near,far);
-	followingCamera.position.set(0,ship.position.y+40,ship.position.z+40);
-	followingCamera.lookAt(scene.position);
+	object.add(followingCamera)
+	followingCamera.position.set(0,50,40)
+	followingCamera.lookAt(new THREE.Vector3( 0,0,-60))
 }
 
 /*function createCamera2(){
@@ -466,13 +468,15 @@ function updateShip(){
 	//ship.userData.velocity=ship.userData.velocity*(delta+0.93);
 
 	//cute thing for ship rotation
-	if (Math.abs(ship.position.x)>=gameWidth/2-25)
+	/*if (Math.abs(ship.position.x)>=gameWidth/2-25){
 		ship.rotation.z=ship.rotation.z*0.95;
-	else
+		followingCamera.rotation.z=-ship.rotation.z*0.95}
+	else{
 		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
+		followingCamera.rotation.z=-ship.rotation.z*0.95
+		}*/
 	
-	followingCamera.position.x=ship.position.x
-
+	
 	if (Math.abs(ship.userData.velocity)<3)
 		ship.userData.velocity=0;
 
