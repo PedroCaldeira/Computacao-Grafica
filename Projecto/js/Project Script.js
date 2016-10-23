@@ -294,7 +294,7 @@ function onKeyDown(e){
 				ship.setAcceleration(500);
 			break;
 		case 66://B
-			BulletArray.push(new Bullet(ship.position.x,ship.position.y,ship.position.z-50,0,-200))
+			BulletArray.push(new Bullet(ship.position.x,ship.position.y,ship.position.z-25,0,-200))
 			break;
 	}
 
