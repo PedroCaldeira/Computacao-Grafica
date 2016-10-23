@@ -16,7 +16,7 @@ var B_up = true;
 var clock;
 var delta;
 var followingCamera
-var first;
+var first=true;
 
 
 
@@ -298,7 +298,6 @@ function onKeyDown(e){
 				ship.setAcceleration(500);
 			break;
 		case 66://B
-			first=true;
 			delta=clockBullet.getDelta();
 			if((delta>0.1 && B_up)||first){
 				first=false;
