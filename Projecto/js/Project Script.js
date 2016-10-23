@@ -8,7 +8,9 @@ var gameWidth=600;
 var aspectRatio=gameHeight/gameWidth;
 var yLineup=30; //height of floating stuff above the field
 var ship;
+var bullet;
 var alienArray=[]
+var BulletArray=[]
 var clock;
 var delta;
 var followingCamera
@@ -24,7 +26,7 @@ function animate() {
 	//animation function
 	'use strict'
 	updateElements();
-	updateShip();
+
 //	cameraControls.update();
 	render()
 	requestAnimationFrame(animate);
@@ -56,6 +58,9 @@ function updateElements(){
 	delta=clock.getDelta();
 	for (var i = 0; i < alienArray.length; i++) {
 		alienArray[i].update(delta)
+	}
+	for (var i = 0; i < BulletArray.length; i++) {
+		BulletArray[i].update(delta)
 	}
 	ship.update(delta)
 }
@@ -386,19 +391,6 @@ function addShieldRoof(object, distance, wallThickness){
 }
 
 
-/*
----------------------------------------------------------------------------------
-								Ship Movement Update
----------------------------------------------------------------------------------
-*/
-
-function updateShip(){
-	
-	
-
-
-}
-
 
 /*
 ---------------------------------------------------------------------------------
@@ -446,6 +438,9 @@ function onKeyDown(e){
 		case 39://right arrow
 			if(ship.getAcceleration()!=500)
 				ship.setAcceleration(500);
+			break;
+		case 66://B
+			BulletArray.push(new Bullet(ship.position.x,ship.position.y,ship.position.z-50,0,-200))
 			break;
 	}
 

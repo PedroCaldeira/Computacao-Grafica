@@ -1,18 +1,18 @@
 class GraphicalEntity extends THREE.Object3D{
-	constructor(speed_x, speed_y, x,y,z){
+	constructor(speed_x, speed_z, x,y,z){
 		super()
 		this.position.set(x,y,z);
 		console.log(this.position)
 		this.speed_x=speed_x
-		this.speed_y=speed_y
+		this.speed_z=speed_z
 	}
 
 	getSpeed(){
 		return this.speed_x;
 	}
-	setSpeed(speed_x, speed_y){
+	setSpeed(speed_x, speed_z){
 		this.speed_x=speed_x;
-		this.speed_y=speed_y;
+		this.speed_z=speed_z;
 	}
 	update(delta){}
 }
@@ -85,6 +85,10 @@ class spaceShip extends GraphicalEntity{
 
 	setAcceleration(acceleration){
 		this.acceleration=acceleration
+	}
+
+	getPosition(){
+		return this.position;
 	}
 
 	addShipBody(){
@@ -238,3 +242,24 @@ class spaceShip extends GraphicalEntity{
 	}
 
 }
+
+class Bullet extends GraphicalEntity{
+	constructor(x,y,z,velx,velz){
+		super(velx,velz, x,y,z)
+		geometry = new THREE.SphereGeometry(5,10,10);
+		material = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: wireBool});
+		mesh = new THREE.Mesh(geometry, material);
+		this.add(mesh);
+		scene.add(this);
+	}
+
+	update(delta){
+		var NewPosBullet= this.position.z + this.speed_z*delta;
+		if(NewPosBullet<-195)
+			scene.remove(this);
+		else
+			this.position.z = NewPosBullet;
+	}
+
+
+	}
