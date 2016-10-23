@@ -23,6 +23,7 @@ function render(){
 function animate() {
 	//animation function
 	'use strict'
+	updateElements();
 	updateShip();
 //	cameraControls.update();
 	render()
@@ -50,6 +51,14 @@ function init(){
 
 }
 
+
+function updateElements(){
+	delta=clock.getDelta();
+	for (var i = 0; i < alienArray.length; i++) {
+		alienArray[i].update(delta)
+	}
+	ship.update(delta)
+}
 
 /*
 ---------------------------------------------------------------------------------
@@ -384,37 +393,8 @@ function addShieldRoof(object, distance, wallThickness){
 */
 
 function updateShip(){
-	delta=clock.getDelta();
-	//new velocity ( v = v + at )
-	ship.userData.velocity+=ship.userData.acceleration*delta;
-	//new position (x= x0 + vt )
-	var newPosShip=ship.position.x+ship.userData.velocity*delta;
-
-	//Field limits check
-	if(newPosShip < -gameWidth/2+25)
-		ship.position.x=-gameWidth/2+25;
-	else if(newPosShip > gameWidth/2-25)
-		ship.position.x=gameWidth/2-25;
-	else
-		ship.position.x=newPosShip
-
-	//"air" resistance for terminal speed
-	ship.userData.velocity=ship.userData.velocity*0.95
-	//ship.userData.velocity=ship.userData.velocity*(delta+0.93);
-
-	//cute thing for ship rotation
-	/*if (Math.abs(ship.position.x)>=gameWidth/2-25){
-		ship.rotation.z=ship.rotation.z*0.95;
-		followingCamera.rotation.z=-ship.rotation.z*0.95}
-	else{
-		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
-		followingCamera.rotation.z=-ship.rotation.z*0.95
-		}*/
 	
 	
-	if (Math.abs(ship.userData.velocity)<3)
-		ship.userData.velocity=0;
-
 
 
 }
@@ -458,14 +438,14 @@ function onKeyDown(e){
 
 
 		case 37://left arrow
-			if(ship.userData.acceleration!=-500)
-				ship.userData.acceleration=-500;
+			if(ship.getAcceleration()!=-500)
+				ship.setAcceleration(-500);
 			break;
 
 
 		case 39://right arrow
-			if(ship.userData.acceleration!=500)
-				ship.userData.acceleration=500;
+			if(ship.getAcceleration()!=500)
+				ship.setAcceleration(500);
 			break;
 	}
 
@@ -475,14 +455,14 @@ function onKeyUp(e){
 	'use strict';
 	switch(e.keyCode){
 		case 37://left arrow
-			if(ship.userData.acceleration!=500)
-				ship.userData.acceleration=0;
+			if(ship.getAcceleration()!=500)
+				ship.setAcceleration(0);
 
 			break;
 
 		case 39://right arrow
-			if(ship.userData.acceleration!=-500)
-				ship.userData.acceleration=0;
+			if(ship.getAcceleration()!=-500)
+				ship.setAcceleration(0);
 			break;
 	}
 }

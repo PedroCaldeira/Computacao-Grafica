@@ -2,9 +2,19 @@ class GraphicalEntity extends THREE.Object3D{
 	constructor(speed_x, speed_y, x,y,z){
 		super()
 		this.position.set(x,y,z);
+		console.log(this.position)
 		this.speed_x=speed_x
 		this.speed_y=speed_y
 	}
+
+	getSpeed(){
+		return this.speed_x;
+	}
+	setSpeed(speed_x, speed_y){
+		this.speed_x=speed_x;
+		this.speed_y=speed_y;
+	}
+	update(delta){}
 }
 
 
@@ -48,12 +58,17 @@ class Alien extends GraphicalEntity{
 		mesh.position.set(0,2,0)
 		this.add(mesh);
 	}
+
+	update(delta){
+
+	}
 }
 
 
 class spaceShip extends GraphicalEntity{
 	constructor(x,y,z){
 		super(0,0, x,y,z)
+		this.acceleration=0
 		this.addShipBody();
 		this.addShipTop();
 		this.addShipFront();
@@ -62,6 +77,14 @@ class spaceShip extends GraphicalEntity{
 		//addFancyStabilizers(ship);
 
 		scene.add(this);
+	}
+
+	getAcceleration(){
+		return this.acceleration
+	}
+
+	setAcceleration(acceleration){
+		this.acceleration=acceleration
 	}
 
 	addShipBody(){
@@ -178,6 +201,40 @@ class spaceShip extends GraphicalEntity{
 		mesh.rotation.set(Math.PI,Math.PI/2,Math.PI/2)
 
 		this.add(mesh);
-}
+	}
+
+
+	update(delta){
+		//new velocity ( v = v + at )
+	this.speed_x+=this.acceleration*delta;
+	//new position (x= x0 + vt )
+	var newPosShip=this.position.x+this.speed_x*delta;
+
+	//Field limits check
+	if(newPosShip < -gameWidth/2+25)
+		this.position.x=-gameWidth/2+25;
+	else if(newPosShip > gameWidth/2-25)
+		this.position.x=gameWidth/2-25;
+	else
+		this.position.x=newPosShip
+
+	//"air" resistance for terminal speed
+	this.speed_x*=0.95
+	//ship.userData.velocity=ship.userData.velocity*(delta+0.93);
+
+	//cute thing for ship rotation
+	/*if (Math.abs(ship.position.x)>=gameWidth/2-25){
+		ship.rotation.z=ship.rotation.z*0.95;
+		followingCamera.rotation.z=-ship.rotation.z*0.95}
+	else{
+		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
+		followingCamera.rotation.z=-ship.rotation.z*0.95
+		}*/
+	
+	
+	if (Math.abs(this.speed_x)<3)
+		this.speed_x=0;
+
+	}
 
 }
