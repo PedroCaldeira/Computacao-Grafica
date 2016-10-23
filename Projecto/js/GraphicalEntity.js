@@ -1,18 +1,18 @@
 class GraphicalEntity extends THREE.Object3D{
-	constructor(speed_x, speed_y, x,y,z){
+	constructor(speed_x, speed_z, x,y,z){
 		super()
 		this.position.set(x,y,z);
 		console.log(this.position)
 		this.speed_x=speed_x
-		this.speed_y=speed_y
+		this.speed_z=speed_z
 	}
 
 	getSpeed(){
 		return this.speed_x;
 	}
-	setSpeed(speed_x, speed_y){
+	setSpeed(speed_x, speed_z){
 		this.speed_x=speed_x;
-		this.speed_y=speed_y;
+		this.speed_z=speed_z;
 	}
 	update(delta){}
 }
@@ -20,15 +20,27 @@ class GraphicalEntity extends THREE.Object3D{
 
 class Alien extends GraphicalEntity{
 	constructor(x,y,z, material){
-		super(0,0, x,y,z)
-		this.material=material
 		
-		var radius=20, segments=25;
-		this.addAlienBody(radius, segments);
-		this.addAlienCockpit(radius/2, segments);
+		super(0,0, x,y,z)
+		this.setInitialMovement()
+		this.material=material
+		this.radius=20
+		this.segments=25;
+		this.addAlienBody(this.radius, this.segments);
+		this.addAlienCockpit(this.radius/2, this.segments);
 		scene.add(this)
 
 		//addAlienLandingGear(alien, radius)
+	}
+
+
+	setInitialMovement(){
+		var angle=(Math.random()*2*Math.PI).toFixed(2)
+		this.dirX=Math.cos(angle)
+		this.dirZ=Math.sin(angle)
+		var speed=30;
+		this.speed_x=speed*this.dirX
+		this.speed_z=speed*this.dirZ
 	}
 
 	addAlienBody(radius, Segments){
@@ -60,9 +72,44 @@ class Alien extends GraphicalEntity{
 	}
 
 	update(delta){
+		if(this.position.x+this.speed_x*delta > gameWidth/2-this.radius*0.72){
+			this.speed_x=-this.speed_x;
+			this.position.x=gameWidth/2-this.radius
 
+		}
+		else if (this.position.x+this.speed_x*delta < -gameWidth/2+this.radius*0.72){
+			this.speed_x=-this.speed_x;
+			this.position.x=-gameWidth/2+this.radius
+		}
+
+		
+
+		if(this.position.z+this.speed_z*delta > 0){
+			this.speed_z=-this.speed_z;
+			this.position.z=0
+
+		}
+		else if (this.position.z+this.speed_z*delta < -gameHeight/2+this.radius*0.72){
+			this.speed_z=-this.speed_z;
+			this.position.z=-gameHeight/2+this.radius
+		}
+		
+
+		var distanceAllowedSquared=Math.pow((2*this.radius*0.72),2)
+		for (var i = 0; i < alienArray.length; i++){
+			if (distanceAllowedSquared<Math.pow((alienArray[i].position.x-this.position.x),2) + Math.pow((alienArray[i].position.z-this.position.z),2)){
+				this.speed_x=-this.speed_x;
+				this.speed_z=-this.speed_z;
+	
+			}
+
+			
+		}
+		this.position.x+=this.speed_x*delta
+		this.position.z+=this.speed_z*delta
 	}
 }
+
 
 
 class spaceShip extends GraphicalEntity{

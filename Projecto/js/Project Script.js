@@ -24,7 +24,6 @@ function animate() {
 	//animation function
 	'use strict'
 	updateElements();
-	updateShip();
 //	cameraControls.update();
 	render()
 	requestAnimationFrame(animate);
@@ -111,156 +110,11 @@ function createField(x, y, z){
 
 	ship=new spaceShip(1,yLineup, 130)
 	//createShip(0,yLineup,130);
-	createAliens(8,4);
+	createAliens(5,3);
 	createShields(4);
 
 
 }
-
-/*
----------------------------------------------------------------------------------
-									Ship Creation
----------------------------------------------------------------------------------
-*/
-/*
-function createShip(x,y,z){
-	//main function for the creation of the ship
-	'use strict';
-
-	ship = new THREE.Object3D();
-	ship.userData = { velocity: 0, acceleration:0};
-
-	addShipBody(ship);
-	addShipTop(ship);
-	addShipFront(ship);
-	addShipWings(ship);
-	addShipTail(ship);
-	//addFancyStabilizers(ship);
-
-	scene.add(ship);
-	ship.position.set(x,y,z);
-}
-
-function addShipBody(ship){
-	//adds the ship body to the ship
-	geometry = new THREE.BoxGeometry( 10, 10, 30);
-	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-	mesh = new THREE.Mesh(geometry, material);
-
-	ship.add(mesh);
-
-}
-
-function addShipTop(ship){
-	//adds the shield cockpit to the ship
-
-	geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
-	material = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: wireBool});
-	mesh = new THREE.Mesh(geometry, material);
-
-	mesh.rotation.set(-Math.PI, Math.PI/2, -Math.PI/2)
-	mesh.position.set(0, 5, 0);
-
-	ship.add(mesh);
-
-	geometry = new THREE.ConeGeometry(3.5,5, 10, 1, true, 0, Math.PI);
-	mesh = new THREE.Mesh(geometry, material);
-
-	mesh.position.set(0, 5, 7.5)
-	mesh.rotation.set(Math.PI/2, Math.PI/2,0);
-
-	ship.add(mesh);
-
-	geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
-	material = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, wireframe: wireBool});
-	mesh = new THREE.Mesh(geometry, material);
-
-	mesh.rotation.x=-Math.PI/2;
-	mesh.position.set(0, 5, -5)
-
-	ship.add(mesh);
-
-}
-
-function addShipFront(ship){
-	//adds an aerodynamic front to the ship
-	geometry = new THREE.ConeGeometry( 7, 10, 4);
-	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-	mesh = new THREE.Mesh(geometry, material);
-	mesh.rotation.set(-Math.PI/2, Math.PI/4,0);
-	mesh.position.z=-20;
-
-	ship.add(mesh);
-}
-
-function addShipWings(ship){
-	//adds both wings to the ship
-	geometry = new THREE.Geometry();
-	geometry.vertices.push( new THREE.Vector3( -10,  10, 0 ),
-							new THREE.Vector3( -10, -5, 0 ),
-							new THREE.Vector3(  5, -5, 0 ),
-							new THREE.Vector3(  5, -10, 0),
-							new THREE.Vector3( -10, -10, 0)
-							);
-	geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
-	geometry.faces.push( new THREE.Face3( 2, 3, 4 ) );
-	geometry.faces.push( new THREE.Face3( 2, 1, 4 ) );
-
-	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-	mesh = new THREE.Mesh( geometry, material ) ;
-	mesh.rotation.x=-Math.PI/2
-	mesh.position.set( 15, 0, 0)
-	mesh.material.side=THREE.DoubleSide;
-
-	var mesh2= mesh.clone()
-	mesh2.rotation.y=Math.PI
-	mesh2.position.set( -15, 0, 0)
-	ship.add(mesh2);
-	ship.add(mesh);
-}
-
-function addFancyStabilizers(ship){
-	//adds an ornament to the ship's wings
-	geometry = new THREE.Geometry();
-	geometry.vertices.push( new THREE.Vector3(  20, 2, 10 ),
-							new THREE.Vector3( 20, 0, 5 ) ,
-							new THREE.Vector3(  20, 0, 10));
-
-	geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
-
-	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-	mesh = new THREE.Mesh( geometry, material ) ;
-	mesh.material.side=THREE.DoubleSide;
-	var mesh2= mesh.clone()
-
-	mesh2.position.x-=40
-
-	ship.add(mesh);
-
-	ship.add(mesh2);
-}
-
-function addShipTail(ship){
-	//adds a booster to the ship
-
-	geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
-	material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-	mesh = new THREE.Mesh(geometry, material);
-
-	mesh.position.z=17;
-	mesh.rotation.set(Math.PI,Math.PI/2,Math.PI/2)
-
-	ship.add(mesh);
-}*/
-
-//---------------------------------------------------------------------------------
-
-
 
 /*
 ---------------------------------------------------------------------------------
@@ -385,19 +239,6 @@ function addShieldRoof(object, distance, wallThickness){
 	object.add(mesh)
 }
 
-
-/*
----------------------------------------------------------------------------------
-								Ship Movement Update
----------------------------------------------------------------------------------
-*/
-
-function updateShip(){
-	
-	
-
-
-}
 
 
 /*
