@@ -9,11 +9,14 @@ var aspectRatio=gameHeight/gameWidth;
 var yLineup=30; //height of floating stuff above the field
 var ship;
 var bullet;
+var clockBullet;
 var alienArray=[]
 var BulletArray=[]
+var B_up = true;
 var clock;
 var delta;
 var followingCamera
+var first;
 
 
 
@@ -36,6 +39,7 @@ function init(){
 	//initial function, called upon page load
 	'use strict';
 	clock= new THREE.Clock();
+	clockBullet = new THREE.Clock();
 	renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
@@ -294,7 +298,13 @@ function onKeyDown(e){
 				ship.setAcceleration(500);
 			break;
 		case 66://B
-			BulletArray.push(new Bullet(ship.position.x,ship.position.y,ship.position.z-25,0,-200))
+			first=true;
+			delta=clockBullet.getDelta();
+			if((delta>0.1 && B_up)||first){
+				first=false;
+				B_up=false;
+				BulletArray.push(new Bullet(ship.position.x,ship.position.y,ship.position.z-25,0,-200))
+				}			
 			break;
 	}
 
@@ -313,6 +323,10 @@ function onKeyUp(e){
 			if(ship.getAcceleration()!=-500)
 				ship.setAcceleration(0);
 			break;
+		 case 66:
+		 	B_up=true;
+		 	break;
+
 	}
 }
 
