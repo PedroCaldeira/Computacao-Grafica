@@ -5,29 +5,22 @@ class BoundingVolume extends THREE.Object3D{
 		this.radius=radius;
 	}
 
-	collided(bv){
-		collided=limitsCheck();
-		var squaredRadius=Math.pow(radius,2);
-		if (squaredRadius<Math.pow((bv.position.x-this.position.x),2) + Math.pow((bv.position.z-this.position.z),2))
-			return true;
+	collided(delta,speed_x,speed_z,bv){
+		var collided=this.limitsCheck(delta,speed_x,speed_z,bv);
+		var squaredRadius=Math.pow(this.radius+bv.radius,2);
+
+		for(var i=0;i<collidables.length;i++)
+			if (squaredRadius<Math.pow((collidables[i].bVolume.position.x-this.position.x),2) + Math.pow((collidables[i].bVolume.position.z-this.position.z),2) && collidables[i]!=this)
+				return true;
 		return false;
 	}
-	limitsCheck(delta){
-		if(this.bVolume.center.x+this.speed_x*delta+this.bVolume.radius > gameWidth/2){
-			return true;
+	limitsCheck(delta,speed_x,speed_z){
+		var collision=false;
+		console.log(this.center.x+speed_x*delta+this.radius)
+		if(Math.abs(this.center.x+speed_x*delta+this.radius) > gameWidth/2||Math.abs(this.center.z+speed_z*delta+this.radius > gameHeight/2)){
+			collision=true;
 		}
-		if(this.bVolume.center.x+this.speed_x*delta+this.bVolume.radius < -gameWidth/2){
-			return true;
-
-		}
-		if(this.bVolume.center.z+this.speed_x*delta+this.bVolume.radius < gameHeight/2){
-			return true;
-
-		}
-		if(this.bVolume.center.z+this.speed_x*delta+this.bVolume.radius > -gameHeight/2){
-			return true;
-
-		}
+		console.log(collision)
 	}
 }
 
@@ -53,15 +46,11 @@ class GraphicalEntity extends THREE.Object3D{
 		this.speed_z=speed_z;
 	}
 	update(delta){
-		if (this.bVolume.limitsCheck(delta)) collision = true;
-
-		if(this.position.x+this.speed_x*delta > gameWidth/2-this.radius*0.72){
-			this.speed_x=-this.speed_x;
-			this.position.x=gameWidth/2-this.radius
+		var collision=false;
+		if (this.bVolume.collided(delta,this.speed_x,this.speed_z)) collision = true;
 		}
-	}
 
-
+	action(){}
 
 }
 
@@ -119,27 +108,7 @@ class Alien extends GraphicalEntity{
 	}
 
 	update(delta){
-		if(this.position.x+this.speed_x*delta > gameWidth/2-this.radius*0.72){
-			this.speed_x=-this.speed_x;
-			this.position.x=gameWidth/2-this.radius
-
-		}
-		else if (this.position.x+this.speed_x*delta < -gameWidth/2+this.radius*0.72){
-			this.speed_x=-this.speed_x;
-			this.position.x=-gameWidth/2+this.radius
-		}
-
-
-
-		if(this.position.z+this.speed_z*delta > 0){
-			this.speed_z=-this.speed_z;
-			this.position.z=0
-
-		}
-		else if (this.position.z+this.speed_z*delta < -gameHeight/2+this.radius*0.72){
-			this.speed_z=-this.speed_z;
-			this.position.z=-gameHeight/2+this.radius
-		}
+		super.update(delta)
 
 
 		var distanceAllowedSquared=Math.pow((2*this.radius*0.72),2)
@@ -154,6 +123,10 @@ class Alien extends GraphicalEntity{
 		}
 		this.position.x+=this.speed_x*delta
 		this.position.z+=this.speed_z*delta
+	}
+
+	action(){
+		this.position.x+=1
 	}
 }
 
@@ -302,6 +275,7 @@ class spaceShip extends GraphicalEntity{
 
 
 	update(delta){
+		super.update(delta)
 		//new velocity ( v = v + at )
 	this.speed_x+=this.acceleration*delta;
 	//new position (x= x0 + vt )
