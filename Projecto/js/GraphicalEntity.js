@@ -1,10 +1,48 @@
-class GraphicalEntity extends THREE.Object3D{
-	constructor(speed_x, speed_z, x,y,z){
+class BoundingVolume extends THREE.Object3D{
+	constructor(center,radius){
 		super()
+		this.center=center;
+		this.radius=radius;
+	}
+
+	collided(bv){
+		collided=limitsCheck();
+		var squaredRadius=Math.pow(radius,2);
+		if (squaredRadius<Math.pow((bv.position.x-this.position.x),2) + Math.pow((bv.position.z-this.position.z),2))
+			return true;
+		return false;
+	}
+	limitsCheck(delta){
+		if(this.bVolume.center.x+this.speed_x*delta+this.bVolume.radius > gameWidth/2){
+			return true;
+		}
+		if(this.bVolume.center.x+this.speed_x*delta+this.bVolume.radius < -gameWidth/2){
+			return true;
+
+		}
+		if(this.bVolume.center.z+this.speed_x*delta+this.bVolume.radius < gameHeight/2){
+			return true;
+
+		}
+		if(this.bVolume.center.z+this.speed_x*delta+this.bVolume.radius > -gameHeight/2){
+			return true;
+
+		}
+	}
+}
+
+class GraphicalEntity extends THREE.Object3D{
+
+
+	constructor(speed_x, speed_z,x,y,z,radius){
+		super()
+		this.acceleration=0
+		this.bVolume= new BoundingVolume(this.position,radius)
 		this.position.set(x,y,z);
-		console.log(this.position)
 		this.speed_x=speed_x
 		this.speed_z=speed_z
+		this.collisionRadius=radius
+		this.collision=false;
 	}
 
 	getSpeed(){
@@ -14,14 +52,24 @@ class GraphicalEntity extends THREE.Object3D{
 		this.speed_x=speed_x;
 		this.speed_z=speed_z;
 	}
-	update(delta){}
+	update(delta){
+		if (this.bVolume.limitsCheck(delta)) collision = true;
+
+		if(this.position.x+this.speed_x*delta > gameWidth/2-this.radius*0.72){
+			this.speed_x=-this.speed_x;
+			this.position.x=gameWidth/2-this.radius
+		}
+	}
+
+
+
 }
 
 
 class Alien extends GraphicalEntity{
 	constructor(x,y,z, material){
-		
-		super(0,0, x,y,z)
+
+		super(0,0,x,y,z,20*0.72)
 		this.setInitialMovement()
 		this.material=material
 		this.radius=20
@@ -39,8 +87,7 @@ class Alien extends GraphicalEntity{
 		this.dirX=Math.cos(angle)
 		this.dirZ=Math.sin(angle)
 		var speed=30;
-		this.speed_x=speed*this.dirX
-		this.speed_z=speed*this.dirZ
+		super.setSpeed(speed*this.dirX, speed*this.dirZ)
 	}
 
 	addAlienBody(radius, Segments){
@@ -82,7 +129,7 @@ class Alien extends GraphicalEntity{
 			this.position.x=-gameWidth/2+this.radius
 		}
 
-		
+
 
 		if(this.position.z+this.speed_z*delta > 0){
 			this.speed_z=-this.speed_z;
@@ -93,17 +140,17 @@ class Alien extends GraphicalEntity{
 			this.speed_z=-this.speed_z;
 			this.position.z=-gameHeight/2+this.radius
 		}
-		
+
 
 		var distanceAllowedSquared=Math.pow((2*this.radius*0.72),2)
 		for (var i = 0; i < alienArray.length; i++){
-			if (distanceAllowedSquared<Math.pow((alienArray[i].position.x-this.position.x),2) + Math.pow((alienArray[i].position.z-this.position.z),2)){
+			if ((distanceAllowedSquared>=Math.pow((alienArray[i].position.x-this.position.x),2) + Math.pow((alienArray[i].position.z-this.position.z),2)) && alienArray[i]!=this){
 				this.speed_x=-this.speed_x;
 				this.speed_z=-this.speed_z;
-	
+
 			}
 
-			
+
 		}
 		this.position.x+=this.speed_x*delta
 		this.position.z+=this.speed_z*delta
@@ -114,8 +161,7 @@ class Alien extends GraphicalEntity{
 
 class spaceShip extends GraphicalEntity{
 	constructor(x,y,z){
-		super(0,0, x,y,z)
-		this.acceleration=0
+		super(0,0, x,y,z,20)
 		this.addShipBody();
 		this.addShipTop();
 		this.addShipFront();
@@ -281,8 +327,8 @@ class spaceShip extends GraphicalEntity{
 		ship.rotation.z=-ship.userData.velocity*Math.PI*0.002;
 		followingCamera.rotation.z=-ship.rotation.z*0.95
 		}*/
-	
-	
+
+
 	if (Math.abs(this.speed_x)<3)
 		this.speed_x=0;
 
@@ -291,13 +337,15 @@ class spaceShip extends GraphicalEntity{
 }
 
 class Bullet extends GraphicalEntity{
+
 	constructor(x,y,z,velx,velz){
-		super(velx,velz, x,y,z)
+		super(velx,velz, x,y,z,5)
 		geometry = new THREE.SphereGeometry(5,10,10);
 		material = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: wireBool});
 		mesh = new THREE.Mesh(geometry, material);
 		this.add(mesh);
 		scene.add(this);
+		this.radius=5
 	}
 
 	update(delta){

@@ -12,6 +12,7 @@ var bullet;
 var clockBullet;
 var alienArray=[]
 var BulletArray=[]
+var collidables=[]
 var B_up = true;
 var clock;
 var delta;
@@ -118,6 +119,7 @@ function createField(x, y, z){
 	field.position.set(x,y,z);
 
 	ship=new spaceShip(1,yLineup, 130)
+	collidables.push(ship)
 	//createShip(0,yLineup,130);
 	createAliens(5,3);
 	createShields(4);
@@ -139,7 +141,9 @@ function createAliens(aliensPerRow, rows){
 
 	for (var r=1; r<=rows; r++ ){
 		for (var a=1;a<=aliensPerRow; a++){
-			alienArray.push(new Alien(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r, material))
+			var alien=new Alien(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r, material)
+			collidables.push(alien)
+			alienArray.push(alien)
 			//alienArray.push(createAlien2(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r))
 		}
 
@@ -302,8 +306,10 @@ function onKeyDown(e){
 			if((delta>0.1 && B_up)||first){
 				first=false;
 				B_up=false;
-				BulletArray.push(new Bullet(ship.position.x,ship.position.y,ship.position.z-25,0,-200))
-				}			
+				var bullet=new Bullet(ship.position.x,ship.position.y,ship.position.z-25,0,-200)
+				collidables.push(bullet)
+				BulletArray.push(bullet)
+				}
 			break;
 	}
 
