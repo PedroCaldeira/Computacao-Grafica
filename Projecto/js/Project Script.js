@@ -10,6 +10,7 @@ var yLineup=30; //height of floating stuff above the field
 var ship;
 var bullet;
 var clockBullet;
+var materialArray=[]
 var alienArray=[]
 var BulletArray=[]
 var collidables=[]
@@ -107,6 +108,7 @@ function createField(x, y, z){
 	var field = new THREE.Object3D();
 
 	material = new THREE.MeshBasicMaterial({ color: 0x4d4d4d, wireframe: wireBool});
+	materialArray.push(material)
 	geometry = new THREE.PlaneGeometry(gameWidth, gameWidth*aspectRatio);
 
 	mesh = new THREE.Mesh(geometry, material);
@@ -138,7 +140,7 @@ function createAliens(aliensPerRow, rows){
 	var x= gameWidth/(aliensPerRow+1)
 	var z= gameWidth*aspectRatio/2/(rows+1)
 	material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
-
+	materialArray.push(material)
 	for (var r=1; r<=rows; r++ ){
 		for (var a=1;a<=aliensPerRow; a++){
 			var alien=new Alien(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r, material)
@@ -202,6 +204,8 @@ function createFollowingCamera(fov,ratio,near,far,object){
 
 function createShields(nshields){
 	var x= gameWidth/(nshields+1);
+	material = new THREE.MeshBasicMaterial({color:0x00ff00, wireframe: wireBool});
+	materialArray.push(material)
 	for (var a=1;a<=nshields; a++)
 		createShield(x*a-gameWidth/2, yLineup, 70);
 }
@@ -210,7 +214,6 @@ function createShields(nshields){
 function createShield(x,y,z){
 	'use strict';
 	var shield = new THREE.Object3D();
-	material = new THREE.MeshBasicMaterial({color:0x00ff00, wireframe: wireBool});
 	var wallDistance=40, wallThickness=15;
 	addShieldWalls(shield,wallDistance, wallThickness);
 	addShieldEdges(shield, wallDistance, wallThickness)
@@ -267,11 +270,16 @@ function onKeyDown(e){
 
 		case 65:
 		case 97://pressed "A/a" toggled wireframes
+		/*
 			scene.traverse(function(node){			//we could also change the materials one by one.
 				if (node instanceof THREE.Mesh) {	//We'd have to add every material to an array tho...
 					node.material.wireframe=!wireBool;//PEDRO: MAY BE NECESSARY FOR COLLISIONS, DON'T KNOW YET
 				}
 			});
+			wireBool=!wireBool*/
+			for (var i = 0; i < materialArray.length; i++) {
+				materialArray[i].wireframe=!wireBool
+			}
 			wireBool=!wireBool
 			break;
 
@@ -341,28 +349,46 @@ function onResize(){
 
 	var windowAspectRatio=window.innerHeight/window.innerWidth;
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	if (camera instanceof THREE.OrthographicCamera){
+		if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
 
-	if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
+			//if window height is thiner than the field aspect ratio
+			if (windowAspectRatio<=aspectRatio){
+				camera.left = -gameHeight/windowAspectRatio/1.5;
+	            camera.right = gameHeight/windowAspectRatio/1.5;;
+	            camera.top = gameHeight/1.5;
+	            camera.bottom = -gameHeight /1.5;
 
-		//if window height is thiner than the field aspect ratio
-		if (windowAspectRatio<=aspectRatio){
-			camera.left = -gameHeight/windowAspectRatio/1.5;
-            camera.right = gameHeight/windowAspectRatio/1.5;;
-            camera.top = gameHeight/1.5;
-            camera.bottom = -gameHeight /1.5;
+			}
+			//otherwise
+			else{
+				camera.left = -gameWidth/1.5;
+	            camera.right = gameWidth/1.5;
+	            camera.top = gameWidth*windowAspectRatio/1.5;
+	            camera.bottom = -gameWidth*windowAspectRatio/1.5;
 
+
+			}
 		}
-		//otherwise
-		else{
-			camera.left = -gameWidth/1.5;
-            camera.right = gameWidth/1.5;
-            camera.top = gameWidth*windowAspectRatio/1.5;
-            camera.bottom = -gameWidth*windowAspectRatio/1.5;
-
-
-		}
-		camera.updateProjectionMatrix();
+		
 	}
+	else if (camera instanceof THREE.PerspectiveCamera){
+		if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
+
+			//if window height is thiner than the field aspect ratio
+			if (windowAspectRatio<=aspectRatio){
+				
+
+			}
+			//otherwise
+			else{
+				
+
+
+			}
+		}
+	}
+	camera.updateProjectionMatrix();
 }
 
 

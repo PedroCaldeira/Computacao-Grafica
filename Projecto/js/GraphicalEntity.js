@@ -47,7 +47,7 @@ class GraphicalEntity extends THREE.Object3D{
 	}
 	update(delta){
 		var collision=false;
-		if (this.bVolume.collided(delta,this.speed_x,this.speed_z)) collision = true;
+		//if (this.bVolume.collided(delta,this.speed_x,this.speed_z)) collision = true;
 		}
 
 	action(){}
@@ -135,6 +135,8 @@ class Alien extends GraphicalEntity{
 class spaceShip extends GraphicalEntity{
 	constructor(x,y,z){
 		super(0,0, x,y,z,20)
+		this.material1=new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
+		materialArray.push(this.material1)
 		this.addShipBody();
 		this.addShipTop();
 		this.addShipFront();
@@ -160,9 +162,7 @@ class spaceShip extends GraphicalEntity{
 	addShipBody(){
 		//adds the ship body to the ship
 		geometry = new THREE.BoxGeometry( 10, 10, 30);
-		material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-		mesh = new THREE.Mesh(geometry, material);
+		mesh = new THREE.Mesh(geometry, this.material1);
 
 		this.add(mesh);
 
@@ -173,6 +173,8 @@ class spaceShip extends GraphicalEntity{
 
 		geometry = new THREE.CylinderGeometry(3.5,4, 10, 10,10,  false, 0, Math.PI);
 		material = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: wireBool});
+		materialArray.push(material)
+
 		mesh = new THREE.Mesh(geometry, material);
 
 		mesh.rotation.set(-Math.PI, Math.PI/2, -Math.PI/2)
@@ -190,6 +192,8 @@ class spaceShip extends GraphicalEntity{
 
 		geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
 		material = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, wireframe: wireBool});
+		materialArray.push(material)
+
 		mesh = new THREE.Mesh(geometry, material);
 
 		mesh.rotation.x=-Math.PI/2;
@@ -202,9 +206,7 @@ class spaceShip extends GraphicalEntity{
 	addShipFront(){
 		//adds an aerodynamic front to the ship
 		geometry = new THREE.ConeGeometry( 7, 10, 4);
-		material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-		mesh = new THREE.Mesh(geometry, material);
+		mesh = new THREE.Mesh(geometry, this.material1);
 		mesh.rotation.set(-Math.PI/2, Math.PI/4,0);
 		mesh.position.z=-20;
 
@@ -224,9 +226,7 @@ class spaceShip extends GraphicalEntity{
 		geometry.faces.push( new THREE.Face3( 2, 3, 4 ) );
 		geometry.faces.push( new THREE.Face3( 2, 1, 4 ) );
 
-		material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-		mesh = new THREE.Mesh( geometry, material ) ;
+		mesh = new THREE.Mesh( geometry, this.material1 ) ;
 		mesh.rotation.x=-Math.PI/2
 		mesh.position.set( 15, 0, 0)
 		mesh.material.side=THREE.DoubleSide;
@@ -247,9 +247,7 @@ class spaceShip extends GraphicalEntity{
 
 		geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
 
-		material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-		mesh = new THREE.Mesh( geometry, material ) ;
+		mesh = new THREE.Mesh( geometry, this.material1 ) ;
 		mesh.material.side=THREE.DoubleSide;
 		var mesh2= mesh.clone()
 
@@ -263,9 +261,7 @@ class spaceShip extends GraphicalEntity{
 		//adds a booster to the ship
 
 		geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
-		material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: wireBool});
-
-		mesh = new THREE.Mesh(geometry, material);
+		mesh = new THREE.Mesh(geometry, this.material1);
 
 		mesh.position.z=17;
 		mesh.rotation.set(Math.PI,Math.PI/2,Math.PI/2)
