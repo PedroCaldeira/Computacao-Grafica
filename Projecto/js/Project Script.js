@@ -40,16 +40,18 @@ function animate() {
 function init(){
 	//initial function, called upon page load
 	'use strict';
-	clock= new THREE.Clock();
-	clockBullet = new THREE.Clock();
+	
 	renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
-
+	//game.js vv
+	clock= new THREE.Clock();
+	clockBullet = new THREE.Clock();
 	createScene();
-	createFollowingCamera(90,2,25,600,ship);
+	createFollowingCamera(90,window.innerWidth/window.innerHeight,25,600,ship);
 	createCamera(0,100,0);
 	//createScenery();
+	//game.js ^^
 	render();
 
 	window.addEventListener("resize", onResize);
@@ -290,7 +292,7 @@ function onKeyDown(e){
 
 
 		case 50://pressed "2" Change camera (default camera)
-			createPerspectiveCamera(90,2,10,500);
+			createPerspectiveCamera(90,window.innerWidth/window.innerHeight,10,500);
 			break;
 
 
@@ -374,7 +376,7 @@ function onResize(){
 	}
 	else if (camera instanceof THREE.PerspectiveCamera){
 		if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
-
+			camera.aspect=1/windowAspectRatio
 			//if window height is thiner than the field aspect ratio
 			if (windowAspectRatio<=aspectRatio){
 				
