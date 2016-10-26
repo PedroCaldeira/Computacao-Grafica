@@ -1,12 +1,16 @@
 class Bullet extends GraphicalEntity{
 
-	constructor(x,y,z,velx,velz){
-		super(velx,velz, x,y,z,5)
-		geometry = new THREE.SphereGeometry(5,10,10);
-		material = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: wireBool});
-		mesh = new THREE.Mesh(geometry, material);
+	constructor(x,y,z,velx,velz, material){
+		super(velx,velz, x,y,z,5, material)
+		this.modelBullet();
+		
+		
+	}
+
+	modelBullet(){
+		var geometry = new THREE.SphereGeometry(this.collisionRadius,10,10);
+		var mesh = new THREE.Mesh(geometry, this.material);
 		this.add(mesh);
-		this.radius=5
 	}
 
 	calculatePos(delta){

@@ -23,8 +23,8 @@ class Alien extends GraphicalEntity{
 	addAlienBody(radius, Segments){
 		'use strict'
 		//top
-		geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 0, 0.8 )
-		mesh= new THREE.Mesh(geometry, this.material)
+		var geometry= new THREE.SphereGeometry(radius, Segments, Segments,0, Math.PI * 2, 0, 0.8 )
+		var mesh= new THREE.Mesh(geometry, this.material)
 		var mesh2=mesh.clone()
 		mesh.position.set(0,-12.5,0)
 		this.add(mesh);
@@ -42,8 +42,8 @@ class Alien extends GraphicalEntity{
 
 	addAlienCockpit(radius, Segments){
 		'use strict'
-		geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 5, 1.8)
-		mesh= new THREE.Mesh(geometry, this.material)
+		var geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 5, 1.8)
+		var mesh= new THREE.Mesh(geometry, this.material)
 		mesh.position.set(0,2,0)
 		this.add(mesh);
 	}
@@ -53,6 +53,8 @@ class Alien extends GraphicalEntity{
 		if (graphEnt instanceof Alien){
 			this.speed_x=-this.speed_x;
 			this.speed_z=-this.speed_z
+			this.tentativepos_x=this.position.x
+			this.tentativepos_z=this.position.z
 		}
 		else if (graphEnt instanceof Bullet){
 			this.isAlive=false
@@ -65,10 +67,13 @@ class Alien extends GraphicalEntity{
 
 	calculatePos(delta){
 		super.calculatePos(delta)
-		if(this.limitsCheck("width")) 
+		if(this.limitsCheck("width")){
 			this.speed_x=-this.speed_x
-		else if(this.limitsCheck("height")) {
+			this.tentativepos_x=this.position.x
+		}
+		if(this.limitsCheck("height")) {
 			this.speed_z=-this.speed_z
+			this.tentativepos_z=this.position.z
 		}
 	}
 

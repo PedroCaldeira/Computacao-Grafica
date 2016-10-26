@@ -30,7 +30,7 @@ class GraphicalEntity extends THREE.Object3D{
 
 	hasCollision(graphEnt){
 		var distanceSquared=Math.pow(this.collisionRadius+graphEnt.collisionRadius,2)
-		if (distanceSquared>= Math.pow(this.tentativepos_x-graphEnt.tentativepos_x,2)+Math.pow(this.tentativepos_z-graphEnt.tentativepos_z,2))
+		if (distanceSquared> Math.pow(this.tentativepos_x-graphEnt.tentativepos_x,2)+Math.pow(this.tentativepos_z-graphEnt.tentativepos_z,2))
 			return true
 		return false
 	}

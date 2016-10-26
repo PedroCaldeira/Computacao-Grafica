@@ -1,30 +1,22 @@
 /*global THREE*/
-var wireBool=true
-var camera, scene, renderer;
+var renderer;
 //var cameraControls;
-var geometry, mesh, material;
 var gameHeight=400;
 var gameWidth=600;
 var aspectRatio=gameHeight/gameWidth;
-var yLineup=30; //height of floating stuff above the field
-var ship;
 var bullet;
 var clockBullet;
 var materialArray=[]
-var alienArray=[]
-var BulletArray=[]
 var collidables=[]
 var B_up = true;
-var clock;
 var delta;
-var followingCamera
 var first=true;
 var game;
 
 
 function render(){
 	'use strict';
-	renderer.render(game.scene, camera);
+	renderer.render(game.scene, game.currentCamera);
 }
 
 function animate() {
@@ -46,8 +38,6 @@ function init(){
 	document.body.appendChild(renderer.domElement);
 	//game.js vv
 	game=new Game(600,400)
-	createFollowingCamera(90,window.innerWidth/window.innerHeight,25,600,game.ship);
-	createCamera(0,100,0);
 	//createScenery();
 	//game.js ^^
 	render();
@@ -57,50 +47,6 @@ function init(){
 	window.addEventListener("keyup", onKeyUp);
 
 }
-
-
-
-function createCamera(x,y,z){
-	'use strict';
-	var windowAspectRatio=window.innerHeight/window.innerWidth;
-
-	//if window height is thiner than the field aspect ratio or something that I can't express
-	if(windowAspectRatio>aspectRatio){
-		camera = new THREE.OrthographicCamera(-gameWidth/1.5,gameWidth/1.5,gameWidth*windowAspectRatio/1.5,-gameWidth*windowAspectRatio/1.5, 1, 1000 );
-	}
-	else{
-		camera = new THREE.OrthographicCamera(-gameHeight/windowAspectRatio/1.5,gameHeight/windowAspectRatio/1.5,gameHeight/1.5,-gameHeight/1.5, 1, 1000 );
-	}
-	camera.position.set(x,y,z);
-	camera.lookAt(game.scene.position);
-
-	/*cameraControls = new THREE.TrackballControls( camera );
-	cameraControls.target.set( 0, 0, 0 )*/
-}
-
-function createPerspectiveCamera(fov,ratio,near,far){
-	camera = new THREE.PerspectiveCamera(fov,ratio,near,far);
-	camera.position.set(0,300,200);
-	camera.lookAt(game.scene.position);
-}
-
-function createFollowingCamera(fov,ratio,near,far,object){
-	followingCamera = new THREE.PerspectiveCamera(fov,ratio,near,far);
-	object.add(followingCamera)
-	followingCamera.position.set(0,50,40)
-	followingCamera.lookAt(new THREE.Vector3( 0,0,-60))
-}
-
-/*function createCamera2(){
-	//auxiliary camera for modelling purposes, must be activated by the user
-	'use strict'
-	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
-	camera.position.z = 200;
-	cameraControls = new THREE.TrackballControls( camera );
-	cameraControls.target.set( 0, 0, 0 )
-}*/
-
-
 
 /*
 ---------------------------------------------------------------------------------
@@ -114,33 +60,26 @@ function onKeyDown(e){
 	switch (e.keyCode){
 
 		case 65:
-		case 97://pressed "A/a" toggled wireframes
-		/*
-			scene.traverse(function(node){			//we could also change the materials one by one.
-				if (node instanceof THREE.Mesh) {	//We'd have to add every material to an array tho...
-					node.material.wireframe=!wireBool;//PEDRO: MAY BE NECESSARY FOR COLLISIONS, DON'T KNOW YET
-				}
-			});
-			wireBool=!wireBool*/
-			for (var i = 0; i < game.materialArray.length; i++) {
-				game.materialArray[i].wireframe=!wireBool
-			}
-			wireBool=!wireBool
+		case 97:
+			game.wireChange()
 			break;
 
 
-		case 49: //pressed "1" Change camera (defaultCamera)
-			createCamera(0,100,0);
+		case 49: //pressed "1" Change game.currentCamera (defaultCamera)
+			game.currentCamera=game.initialCamera;
+			onResize();
 			break;
 
 
-		case 50://pressed "2" Change camera (default camera)
-			createPerspectiveCamera(90,window.innerWidth/window.innerHeight,10,500);
+		case 50://pressed "2" Change game.currentCamera (default game.currentCamera)
+			game.currentCamera=game.perspectiveCamera;
+			onResize();
 			break;
 
 
-		case 51://pressed "3" Change camera
-			camera=followingCamera
+		case 51://pressed "3" Change game.currentCamera
+			game.currentCamera=game.followingCamera;
+			onResize();
 			break;
 
 
@@ -159,9 +98,7 @@ function onKeyDown(e){
 			if((delta>0.1 && B_up)||first){
 				first=false;
 				B_up=false;
-				var bullet=new Bullet(game.ship.position.x,game.ship.position.y,game.ship.position.z-35,0,-200)
-				game.collidables.push(bullet)
-				game.scene.add(bullet)
+				game.shoot();
 				}
 			break;
 	}
@@ -194,32 +131,32 @@ function onResize(){
 
 	var windowAspectRatio=window.innerHeight/window.innerWidth;
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	if (camera instanceof THREE.OrthographicCamera){
+	if (game.currentCamera instanceof THREE.OrthographicCamera){
 		if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
 
 			//if window height is thiner than the field aspect ratio
 			if (windowAspectRatio<=aspectRatio){
-				camera.left = -gameHeight/windowAspectRatio/1.5;
-	            camera.right = gameHeight/windowAspectRatio/1.5;;
-	            camera.top = gameHeight/1.5;
-	            camera.bottom = -gameHeight /1.5;
+				game.currentCamera.left = -gameHeight/windowAspectRatio/1.5;
+	            game.currentCamera.right = gameHeight/windowAspectRatio/1.5;;
+	            game.currentCamera.top = gameHeight/1.5;
+	            game.currentCamera.bottom = -gameHeight /1.5;
 
 			}
 			//otherwise
 			else{
-				camera.left = -gameWidth/1.5;
-	            camera.right = gameWidth/1.5;
-	            camera.top = gameWidth*windowAspectRatio/1.5;
-	            camera.bottom = -gameWidth*windowAspectRatio/1.5;
+				game.currentCamera.left = -gameWidth/1.5;
+	            game.currentCamera.right = gameWidth/1.5;
+	            game.currentCamera.top = gameWidth*windowAspectRatio/1.5;
+	            game.currentCamera.bottom = -gameWidth*windowAspectRatio/1.5;
 			}
 		}
 		
 	}
-	else if (camera instanceof THREE.PerspectiveCamera)
-		camera.aspect=1/windowAspectRatio
+	else if (game.currentCamera instanceof THREE.PerspectiveCamera)
+		game.currentCamera.aspect=1/windowAspectRatio
 		
 	
-	camera.updateProjectionMatrix();
+	game.currentCamera.updateProjectionMatrix();
 }
 
 
@@ -247,9 +184,9 @@ function createLight(){
 	spotLight.shadow.mapSize.width = 1024;
 	spotLight.shadow.mapSize.height = 1024;
 
-	spotLight.shadow.camera.near = 500;
-	spotLight.shadow.camera.far = 4000;
-	spotLight.shadow.camera.fov = 90;
+	spotLight.shadow.game.currentCamera.near = 500;
+	spotLight.shadow.game.currentCamera.far = 4000;
+	spotLight.shadow.game.currentCamera.fov = 90;
 
 	scene.add(spotLight);
 	}
