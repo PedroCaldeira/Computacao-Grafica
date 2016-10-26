@@ -19,18 +19,18 @@ var clock;
 var delta;
 var followingCamera
 var first=true;
-
+var game;
 
 
 function render(){
 	'use strict';
-	renderer.render(scene, camera);
+	renderer.render(game.scene, camera);
 }
 
 function animate() {
 	//animation function
 	'use strict'
-	updateElements();
+	game.updateElements();
 //	cameraControls.update();
 	render()
 	requestAnimationFrame(animate);
@@ -45,10 +45,8 @@ function init(){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
 	//game.js vv
-	clock= new THREE.Clock();
-	clockBullet = new THREE.Clock();
-	createScene();
-	createFollowingCamera(90,window.innerWidth/window.innerHeight,25,600,ship);
+	game=new Game(600,400)
+	createFollowingCamera(90,window.innerWidth/window.innerHeight,25,600,game.ship);
 	createCamera(0,100,0);
 	//createScenery();
 	//game.js ^^
@@ -59,101 +57,6 @@ function init(){
 	window.addEventListener("keyup", onKeyUp);
 
 }
-
-
-function updateElements(){
-	delta=clock.getDelta();
-	for (var i = 0; i < alienArray.length; i++) {
-		alienArray[i].update(delta)
-	}
-	for (var i = 0; i < BulletArray.length; i++) {
-		BulletArray[i].update(delta)
-	}
-	ship.update(delta)
-}
-
-/*
----------------------------------------------------------------------------------
-									Scene Creation
----------------------------------------------------------------------------------
-*/
-
-
-function createScene(){
-	//creates every object; main scene function
-	'use strict';
-	scene = new THREE.Scene();
-	scene.add(new THREE.AxisHelper(10));
-
-	createField(0, 0, 0);
-	//Don't know if we should create them here or within the createField
-	//Did what made more sense to me
-
-	//createShip(0,yLineup,130);
-
-	//createAliens(8,4);
-	//createShields(4);
-
-	//createLight();
-}
-/*
----------------------------------------------------------------------------------
-									Field Creation
----------------------------------------------------------------------------------
-*/
-
-function createField(x, y, z){
-	//creates a plane that represents "de" playing field
-	'use strict';
-
-
-	var field = new THREE.Object3D();
-
-	material = new THREE.MeshBasicMaterial({ color: 0x4d4d4d, wireframe: wireBool});
-	materialArray.push(material)
-	geometry = new THREE.PlaneGeometry(gameWidth, gameWidth*aspectRatio);
-
-	mesh = new THREE.Mesh(geometry, material);
-	mesh.position.set(0, 0, 0);// field centered
-
-	field.add(mesh);
-	scene.add(field);
-	//so it gets perpendicular to y axis
-	field.rotation.x= Math.PI/2;
-	field.position.set(x,y,z);
-
-	ship=new spaceShip(1,yLineup, 130)
-	collidables.push(ship)
-	//createShip(0,yLineup,130);
-	createAliens(5,3);
-	createShields(4);
-
-
-}
-
-/*
----------------------------------------------------------------------------------
-								Alien Creation
----------------------------------------------------------------------------------
-*/
-
-function createAliens(aliensPerRow, rows){
-	//calculates the place of every alien and orders its construction
-	var x= gameWidth/(aliensPerRow+1)
-	var z= gameWidth*aspectRatio/2/(rows+1)
-	material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
-	materialArray.push(material)
-	for (var r=1; r<=rows; r++ ){
-		for (var a=1;a<=aliensPerRow; a++){
-			var alien=new Alien(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r, material)
-			collidables.push(alien)
-			alienArray.push(alien)
-			//alienArray.push(createAlien2(x*a-gameWidth/2, yLineup, (-gameWidth*aspectRatio/2)+z*r))
-		}
-
-	}
-}
-
 
 
 
@@ -169,7 +72,7 @@ function createCamera(x,y,z){
 		camera = new THREE.OrthographicCamera(-gameHeight/windowAspectRatio/1.5,gameHeight/windowAspectRatio/1.5,gameHeight/1.5,-gameHeight/1.5, 1, 1000 );
 	}
 	camera.position.set(x,y,z);
-	camera.lookAt(scene.position);
+	camera.lookAt(game.scene.position);
 
 	/*cameraControls = new THREE.TrackballControls( camera );
 	cameraControls.target.set( 0, 0, 0 )*/
@@ -178,7 +81,7 @@ function createCamera(x,y,z){
 function createPerspectiveCamera(fov,ratio,near,far){
 	camera = new THREE.PerspectiveCamera(fov,ratio,near,far);
 	camera.position.set(0,300,200);
-	camera.lookAt(scene.position);
+	camera.lookAt(game.scene.position);
 }
 
 function createFollowingCamera(fov,ratio,near,far,object){
@@ -196,66 +99,6 @@ function createFollowingCamera(fov,ratio,near,far,object){
 	cameraControls = new THREE.TrackballControls( camera );
 	cameraControls.target.set( 0, 0, 0 )
 }*/
-
-
-/*
----------------------------------------------------------------------------------
-								Shield Creation
----------------------------------------------------------------------------------
-*/
-
-function createShields(nshields){
-	var x= gameWidth/(nshields+1);
-	material = new THREE.MeshBasicMaterial({color:0x00ff00, wireframe: wireBool});
-	materialArray.push(material)
-	for (var a=1;a<=nshields; a++)
-		createShield(x*a-gameWidth/2, yLineup, 70);
-}
-
-
-function createShield(x,y,z){
-	'use strict';
-	var shield = new THREE.Object3D();
-	var wallDistance=40, wallThickness=15;
-	addShieldWalls(shield,wallDistance, wallThickness);
-	addShieldEdges(shield, wallDistance, wallThickness)
-	addShieldRoof(shield, wallDistance, wallThickness);
-	scene.add(shield);
-	shield.position.set(x,y,z);
-}
-
-
-function addShieldWalls(object, distance, wallThickness){
-	'use strict'
-	geometry=new THREE.CubeGeometry(wallThickness,wallThickness,wallThickness*2);
-	mesh=new THREE.Mesh(geometry, material);
-	var mesh2=mesh.clone()
-	mesh.position.set(-distance/2, 0, 0)
-	mesh2.position.set(distance/2, 0, 0)
-	object.add(mesh2)
-	object.add(mesh);
-}
-
-
-function addShieldEdges(object, distance, wallThickness){
-	'use strict'
-	geometry=new THREE.CubeGeometry(Math.sqrt(2*wallThickness*wallThickness),wallThickness,Math.sqrt(2*wallThickness*wallThickness));
-	mesh=new THREE.Mesh(geometry, material);
-	mesh.rotation.y=Math.PI/4
-	mesh.position.set(-distance/2+wallThickness/2, 0, -wallThickness)
-	var mesh2=mesh.clone()
-	mesh2.position.set(distance/2-wallThickness/2, 0, -wallThickness)
-	object.add(mesh)
-	object.add(mesh2)
-}
-
-function addShieldRoof(object, distance, wallThickness){
-	'use strict'
-	geometry=new THREE.CubeGeometry(distance-wallThickness,wallThickness,wallThickness);
-	mesh=new THREE.Mesh(geometry, material);
-	mesh.position.set(0, 0, -wallThickness*1.5)
-	object.add(mesh)
-}
 
 
 
@@ -279,8 +122,8 @@ function onKeyDown(e){
 				}
 			});
 			wireBool=!wireBool*/
-			for (var i = 0; i < materialArray.length; i++) {
-				materialArray[i].wireframe=!wireBool
+			for (var i = 0; i < game.materialArray.length; i++) {
+				game.materialArray[i].wireframe=!wireBool
 			}
 			wireBool=!wireBool
 			break;
@@ -302,23 +145,23 @@ function onKeyDown(e){
 
 
 		case 37://left arrow
-			if(ship.getAcceleration()!=-500)
-				ship.setAcceleration(-500);
+			if(game.ship.getAcceleration()!=-500)
+				game.ship.setAcceleration(-500);
 			break;
 
 
 		case 39://right arrow
-			if(ship.getAcceleration()!=500)
-				ship.setAcceleration(500);
+			if(game.ship.getAcceleration()!=500)
+				game.ship.setAcceleration(500);
 			break;
 		case 66://B
-			delta=clockBullet.getDelta();
+			delta=game.clockBullet.getDelta();
 			if((delta>0.1 && B_up)||first){
 				first=false;
 				B_up=false;
-				var bullet=new Bullet(ship.position.x,ship.position.y,ship.position.z-25,0,-200)
-				collidables.push(bullet)
-				BulletArray.push(bullet)
+				var bullet=new Bullet(game.ship.position.x,game.ship.position.y,game.ship.position.z-30,0,-200)
+				game.collidables.push(bullet)
+				game.scene.add(bullet)
 				}
 			break;
 	}
@@ -329,14 +172,14 @@ function onKeyUp(e){
 	'use strict';
 	switch(e.keyCode){
 		case 37://left arrow
-			if(ship.getAcceleration()!=500)
-				ship.setAcceleration(0);
+			if(game.ship.getAcceleration()!=500)
+				game.ship.setAcceleration(0);
 
 			break;
 
 		case 39://right arrow
-			if(ship.getAcceleration()!=-500)
-				ship.setAcceleration(0);
+			if(game.ship.getAcceleration()!=-500)
+				game.ship.setAcceleration(0);
 			break;
 		 case 66:
 		 	B_up=true;
@@ -368,28 +211,14 @@ function onResize(){
 	            camera.right = gameWidth/1.5;
 	            camera.top = gameWidth*windowAspectRatio/1.5;
 	            camera.bottom = -gameWidth*windowAspectRatio/1.5;
-
-
 			}
 		}
 		
 	}
-	else if (camera instanceof THREE.PerspectiveCamera){
-		if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
-			camera.aspect=1/windowAspectRatio
-			//if window height is thiner than the field aspect ratio
-			if (windowAspectRatio<=aspectRatio){
-				
-
-			}
-			//otherwise
-			else{
-				
-
-
-			}
-		}
-	}
+	else if (camera instanceof THREE.PerspectiveCamera)
+		camera.aspect=1/windowAspectRatio
+		
+	
 	camera.updateProjectionMatrix();
 }
 

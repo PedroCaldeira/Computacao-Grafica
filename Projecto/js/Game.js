@@ -18,15 +18,7 @@ class Game{
 		this.scene.add(new THREE.AxisHelper(10));
 
 		this.createField(0, 0, 0);
-		//Don't know if we should create them here or within the createField
-		//Did what made more sense to me
 
-		//createShip(0,yLineup,130);
-
-		//createAliens(8,4);
-		//createShields(4);
-
-		//createLight();
 	}
 	createField(x, y, z){
 		//creates a plane that represents "de" playing field
@@ -49,10 +41,11 @@ class Game{
 		this.field.position.set(x,y,z);
 
 		this.ship=new spaceShip(1,yLineup, 130)
+		this.scene.add(this.ship)
 		this.collidables.push(this.ship)
 		//createShip(0,yLineup,130);
 		this.createAliens(5,3);
-		this.createShields(4);
+		//this.createShields(4);
 
 
 	}
@@ -62,16 +55,48 @@ class Game{
 		//calculates the place of every alien and orders its construction
 		var x= this.gameWidth/(aliensPerRow+1)
 		var z= this.gameHeight/2/(rows+1)
-		this.material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
-		this.materialArray.push(this.material)
+		var material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: wireBool});
+		this.materialArray.push(material)
 		for (var r=1; r<=rows; r++ ){
 			for (var a=1;a<=aliensPerRow; a++){
-				var alien=new Alien(x*a-this.gameWidth/2, this.yLineup, (-this.gameHeight/2)+z*r, this.material)
-				this.collidables.push(this.alien)
-				this.alienArray.push(this.alien)
+				var alien=new Alien(x*a-this.gameWidth/2, this.yLineup, (-this.gameHeight/2)+z*r, material)
+				this.scene.add(alien)
+				this.collidables.push(alien)
 			}
 
 		}
 	}
+
+	createShields(nshields){
+		var x= this.gameWidth/(nshields+1);
+		var material = new THREE.MeshBasicMaterial({color:0x00ff00, wireframe: wireBool});
+		this.materialArray.push(material)
+		for (var a=1;a<=nshields; a++){
+			var shield=new Shield(x*a-gameWidth/2, yLineup, 70, material)
+			this.collidables.push(shield);
+			this.scene.add(shield)
+		}
+	}
+
+
+	updateElements(){
+		var delta=this.clock.getDelta();
+
+		for (var i = 0; i < this.collidables.length; i++) {
+			this.collidables[i].calculatePos(delta)
+		}
+		for (var i = 0; i < this.collidables.length; i++) {
+			for (var j = i+1; j < this.collidables.length; j++) {
+				if (this.collidables[i].hasCollision(this.collidables[j])){
+					console.log(this.collidables[i])
+					console.log(this.collidables[j])
+					this.collidables[i].processCollision(this.collidables[j])
+					this.collidables[j].processCollision(this.collidables[i])
+				}
+			}			
+		}
+
+	}
+
 
 }
