@@ -159,7 +159,7 @@ function onKeyDown(e){
 			if((delta>0.1 && B_up)||first){
 				first=false;
 				B_up=false;
-				var bullet=new Bullet(game.ship.position.x,game.ship.position.y,game.ship.position.z-30,0,-200)
+				var bullet=new Bullet(game.ship.position.x,game.ship.position.y,game.ship.position.z-35,0,-200)
 				game.collidables.push(bullet)
 				game.scene.add(bullet)
 				}

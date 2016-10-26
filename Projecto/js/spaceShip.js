@@ -180,10 +180,7 @@ class spaceShip extends GraphicalEntity{
 		super.calculatePos(delta)
 
 		if (this.limitsCheck("width"))
-			this.position.x=(gameWidth/2-this.collisionRadius)* Math.sign(this.position.x)
-		else
-			this.position.set(this.tentativepos_x,yLineup,this.tentativepos_z)
-		
+			this.tentativepos_x=(gameWidth/2-this.collisionRadius)* Math.sign(this.position.x)
 		if (Math.abs(this.speed_x)<3)
 			this.speed_x=0;
 	}

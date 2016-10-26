@@ -86,15 +86,22 @@ class Game{
 			this.collidables[i].calculatePos(delta)
 		}
 		for (var i = 0; i < this.collidables.length; i++) {
-			for (var j = i+1; j < this.collidables.length; j++) {
+			for (var j = i+1; j < this.collidables.length; j++) 
 				if (this.collidables[i].hasCollision(this.collidables[j])){
-					console.log(this.collidables[i])
-					console.log(this.collidables[j])
 					this.collidables[i].processCollision(this.collidables[j])
 					this.collidables[j].processCollision(this.collidables[i])
+					this.collidables[i].tentativepos_x=this.collidables[i].position.x;
+					this.collidables[i].tentativepos_z=this.collidables[i].position.z;
 				}
-			}			
+			if (!this.collidables[i].isAlive){
+				this.scene.remove(this.collidables[i])
+				this.collidables.splice(i,1)
+			}
+			else{
+				this.collidables[i].position.set(this.collidables[i].tentativepos_x,yLineup,this.collidables[i].tentativepos_z)
+			}
 		}
+
 
 	}
 

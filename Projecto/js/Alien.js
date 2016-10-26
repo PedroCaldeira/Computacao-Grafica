@@ -55,7 +55,8 @@ class Alien extends GraphicalEntity{
 			this.speed_z=-this.speed_z
 		}
 		else if (graphEnt instanceof Bullet){
-			game.scene.remove(this)
+			this.isAlive=false
+			//game.scene.remove(this)
 			//game.collidables.splice(game.collidables.indexOf(this),1)
 		}
 
@@ -68,9 +69,6 @@ class Alien extends GraphicalEntity{
 			this.speed_x=-this.speed_x
 		else if(this.limitsCheck("height")) {
 			this.speed_z=-this.speed_z
-		}
-		else{
-			this.position.set(this.tentativepos_x,yLineup,this.tentativepos_z)
 		}
 	}
 

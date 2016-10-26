@@ -10,17 +10,20 @@ class Bullet extends GraphicalEntity{
 	}
 
 	calculatePos(delta){
-		var NewPosBullet= this.position.z + this.speed_z*delta;
-		if(NewPosBullet<-195){
-			game.scene.remove(this);
+		super.calculatePos(delta)
+		if(this.position.z<-195){
+			this.isAlive=false
 			//game.collidables.remove(this)
 		}
-		else
-			this.position.z = NewPosBullet;
 	}
 
 	processCollision(graphEnt){
-
+		if (graphEnt instanceof Alien){
+			this.isAlive=false
+		}
+		if (graphEnt instanceof spaceShip){
+			console.log("SCRUUB")
+		}
 	}
 
 
