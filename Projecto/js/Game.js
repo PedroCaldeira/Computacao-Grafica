@@ -37,7 +37,7 @@ class Game{
 
 		this.field = new THREE.Object3D();
 
-		var material = new THREE.MeshBasicMaterial({ color: 0x4d4d4d, wireframe: true});
+		var material = new THREE.MeshBasicMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
 		this.materialArray.push(material)
 		var geometry = new THREE.PlaneGeometry(this.gameWidth, this.gameHeight);
 
