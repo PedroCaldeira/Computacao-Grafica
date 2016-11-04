@@ -1,11 +1,13 @@
 class spaceShip extends GraphicalEntity{
-	constructor(x,y,z, mainMaterial, cockpitMaterial){
-		super(0,0, x,y,z,25, mainMaterial)
-		this.cockpitMaterial=cockpitMaterial
+	constructor(x,y,z, pmainMaterial, pcockpitMaterial, gmainMaterial, gcockpitMaterial){
+		super(0,0, x,y,z,25, pmainMaterial, gmainMaterial)
+		this.pcockpitMaterial=pcockpitMaterial
+		this.gcockpitMaterial=gcockpitMaterial
+		this.cockpitMaterial=pcockpitMaterial
 		this.acceleration=0;
 		this.ship=new THREE.Object3D();
 		this.addShipBody(this.ship);
-		this.addShipTop(this.ship);
+		//this.addShipTop(this.ship);
 		this.addShipFront(this.ship);
 		this.addShipWings(this.ship);
 		this.addShipTail(this.ship);
@@ -33,7 +35,7 @@ class spaceShip extends GraphicalEntity{
 
 		obj.add(mesh);
 	}
-
+/*
 	addShipTop(obj){
 		//adds the shield cockpit to the ship
 
@@ -61,6 +63,7 @@ class spaceShip extends GraphicalEntity{
 
 		obj.add(mesh);
 	}
+	*/
 
 	addShipFront(obj){
 		//adds an aerodynamic front to the ship
@@ -84,7 +87,7 @@ class spaceShip extends GraphicalEntity{
 		geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
 		geometry.faces.push( new THREE.Face3( 2, 3, 4 ) );
 		geometry.faces.push( new THREE.Face3( 2, 1, 4 ) );
-
+		geometry.computeFaceNormals()
 		var mesh = new THREE.Mesh( geometry, this.material ) ;
 		mesh.rotation.x=-Math.PI/2
 		mesh.position.set( 15, 0, 0)
@@ -128,6 +131,16 @@ class spaceShip extends GraphicalEntity{
 		obj.add(mesh);
 	}
 
+
+	changeMaterial(flag){
+		if (flag)
+			this.cockpitMaterial=this.gcockpitMaterial
+		else
+			this.cockpitMaterial=this.pcockpitMaterial
+
+	}
+
+
 	updateSpeed(delta){
 		this.speed_x+=this.acceleration*delta;
 		this.speed_x*=0.95
@@ -145,6 +158,21 @@ class spaceShip extends GraphicalEntity{
 			this.tentativepos_x=(gameWidth/2-this.collisionRadius)* Math.sign(this.position.x)
 		if (Math.abs(this.speed_x)<3)
 			this.speed_x=0;
+	}
+
+	changeMaterial(flag){
+		if (flag){
+			this.material=this.gouraudMaterial
+		}
+		else{
+			this.material=this.phongMaterial
+		}
+		for (var i = 0; i < this.ship.children.length; i++) {
+			//console.log(this.children[i])
+			this.ship.children[i].material=this.material
+		}
+
+
 	}
 
 }

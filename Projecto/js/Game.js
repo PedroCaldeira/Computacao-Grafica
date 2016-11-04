@@ -16,8 +16,14 @@ class Game{
 		this.collidables=[]
 		this.clockBullet=new THREE.Clock();
 		this.createScene();
-		this.bulletMaterial = new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: true});
-		this.materialArray.push(this.bulletMaterial);
+		this.pbulletMaterial = new THREE.MeshPhongMaterial({ color: 0x00eeee, wireframe: true});
+		this.gbulletMaterial= new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: true});
+		this.bbulletMaterial= new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: true});
+		this.materialArray.push(this.pbulletMaterial);
+		this.materialArray.push(this.gbulletMaterial);
+		this.materialArray.push(this.bbulletMaterial);
+		cameraControls = new THREE.TrackballControls( this.perspectiveCamera );
+		cameraControls.target.set( 0, 0, 0 )
 	}
 
 	createScene(){
@@ -28,6 +34,7 @@ class Game{
 
 		this.createField(0, 0, 0);
 		this.createCameras();
+		this.createLighting()
 
 	}
 	createField(x, y, z){
@@ -37,11 +44,13 @@ class Game{
 
 		this.field = new THREE.Object3D();
 
-		var material = new THREE.MeshBasicMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
-		this.materialArray.push(material)
+		this.pFieldmaterial = new THREE.MeshPhongMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
+		this.gFieldmaterial = new THREE.MeshLambertMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
+		this.materialArray.push(this.pFieldmaterial)
+		this.materialArray.push(this.gFieldmaterial)
 		var geometry = new THREE.PlaneGeometry(this.gameWidth, this.gameHeight);
 
-		var mesh = new THREE.Mesh(geometry, material);
+		var mesh = new THREE.Mesh(geometry, this.pFieldmaterial);
 		mesh.position.set(0, 0, 0);// field centered
 
 		this.field.add(mesh);
@@ -50,27 +59,49 @@ class Game{
 		this.field.rotation.x= Math.PI/2;
 		this.field.position.set(x,y,z);
 
-		var mainMaterial= new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true})
-		var cockpitMaterial= new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true})
-		this.materialArray.push(mainMaterial)
-		this.materialArray.push(cockpitMaterial)
-		this.ship=new spaceShip(1,this.yLineup, 130, mainMaterial, cockpitMaterial)
-		this.scene.add(this.ship)
-		this.collidables.push(this.ship)
-		//createShip(0,yLineup,130);
+		this.createShip(0,this.yLineup,130);
+
+		
 		this.createAliens(5,3);
 		//this.createShields(4);
+	}
+
+	createShip(x,y,z){
+		var pmainMaterial= new THREE.MeshPhongMaterial({ color: 0x0000ff, wireframe: true, side: THREE.DoubleSide})
+		var pcockpitMaterial= new THREE.MeshPhongMaterial({ color: 0x00ffff, wireframe: true, side: THREE.DoubleSide})
+		var gmainMaterial= new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: true, side: THREE.DoubleSide})
+		var gcockpitMaterial= new THREE.MeshLambertMaterial({ color: 0x00ffff, wireframe: true, side: THREE.DoubleSide})
+		this.materialArray.push(pmainMaterial)
+		this.materialArray.push(pcockpitMaterial)
+		this.materialArray.push(gmainMaterial)
+		this.materialArray.push(gcockpitMaterial)
+
+		this.ship=new spaceShip(x,y,z, pmainMaterial, pcockpitMaterial, gmainMaterial, gcockpitMaterial)
+		this.scene.add(this.ship)
+		this.collidables.push(this.ship)
 	}
 
 	createAliens(aliensPerRow, rows){
 		//calculates the place of every alien and orders its construction
 		var x= this.gameWidth/(aliensPerRow+1)
 		var z= this.gameHeight/2/(rows+1)
-		var material= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true});
-		this.materialArray.push(material)
+		var pMaterial= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
+		var pMaterial2= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		var bMaterial= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
+		var bMaterial2= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		var gMaterial= new THREE.MeshLambertMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
+		var gMaterial2= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		
+		this.materialArray.push(bMaterial)
+		this.materialArray.push(bMaterial2)
+		this.materialArray.push(pMaterial)
+		this.materialArray.push(pMaterial2)
+		this.materialArray.push(gMaterial)
+		this.materialArray.push(gMaterial2)
+
 		for (var r=1; r<=rows; r++ ){
 			for (var a=1;a<=aliensPerRow; a++){
-				var alien=new Alien(x*a-this.gameWidth/2, this.yLineup, (-this.gameHeight/2)+z*r, material)
+				var alien=new Alien(x*a-this.gameWidth/2, this.yLineup, (-this.gameHeight/2)+z*r, pMaterial, pMaterial2, gMaterial, gMaterial2, bMaterial, bMaterial2)
 				this.scene.add(alien)
 				this.collidables.push(alien)
 			}
@@ -143,15 +174,16 @@ class Game{
 		}
 		this.initialCamera.position.set(x,y,z);
 		this.initialCamera.lookAt(this.scene.position);
+		
 
-		/*cameraControls = new THREE.TrackballControls( camera );
-		cameraControls.target.set( 0, 0, 0 )*/
+		
 	}
 
 	createPerspectiveCamera(fov,ratio,near,far){
 		this.perspectiveCamera = new THREE.PerspectiveCamera(fov,ratio,near,far);
 		this.perspectiveCamera.position.set(0,300,200);
 		this.perspectiveCamera.lookAt(this.scene.position);
+		
 	}
 
 	createFollowingCamera(fov,ratio,near,far,object){
@@ -161,9 +193,32 @@ class Game{
 		this.followingCamera.lookAt(new THREE.Vector3( 0,0,-60))
 	}
 
-	shoot(){	
-		var bullet=new Bullet(this.ship.position.x,this.ship.position.y,this.ship.position.z-30,0,-200, this.bulletMaterial)
+	createLighting(){
+		this.createSun();
+		//this.createStars();
+	}
+
+	createSun(){
+		var light= new THREE.DirectionalLight( 0xffffff, 0.8 );
+		light.position.set(200,200,0)
+		light.target= this.field;
+		this.scene.add(light)
+	}
+
+	shoot(flag){
+		var bullet=new Bullet(this.ship.position.x,this.ship.position.y,this.ship.position.z-30,0,-200, this.pbulletMaterial, this.gbulletMaterial, flag)
 		this.collidables.push(bullet)
 		this.scene.add(bullet)
 	}
-	}	
+
+	changeMaterials(flag){
+		if (flag)
+			this.field.children[0].material=this.gFieldmaterial
+		else
+			this.field.children[0].material=this.pFieldmaterial
+
+		for (var i = 0; i < this.collidables.length; i++) {
+			this.collidables[i].changeMaterial(flag)
+			}
+	}
+}	

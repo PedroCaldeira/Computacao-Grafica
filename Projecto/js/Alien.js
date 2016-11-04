@@ -1,12 +1,16 @@
 class Alien extends GraphicalEntity{
-	constructor(x,y,z, material){
+	constructor(x,y,z, pmaterial, pcockpitMaterial, gmaterial, gcockpitMaterial, bmaterial, bcockpitMaterial){
 
-		super(0,0,x,y,z,20*0.72, material)
+		super(0,0,x,y,z,20*0.72, pmaterial, gmaterial, bmaterial)
+		this.gcockpitMaterial=gcockpitMaterial
+		this.pcockpitMaterial=pcockpitMaterial
+		this.bcockpitMaterial=bcockpitMaterial
+		this.cockpitMaterial=pcockpitMaterial
 		this.setInitialMovement()
 		this.radius=20
 		this.segments=25;
 		this.addAlienBody(this.radius, this.segments);
-		this.addAlienCockpit(this.radius/2, this.segments);
+		this.addAlienCockpit(this.radius/2, this.segments, this.cockpitMaterial);
 
 		//addAlienLandingGear(alien, radius)
 	}
@@ -16,7 +20,8 @@ class Alien extends GraphicalEntity{
 		var angle=(Math.random()*2*Math.PI).toFixed(2)
 		this.dirX=Math.cos(angle)
 		this.dirZ=Math.sin(angle)
-		var speed=30;
+		var speed=40;
+		//var speed=Math.random()*40 + 30;
 		super.setSpeed(speed*this.dirX, speed*this.dirZ)
 	}
 
@@ -40,12 +45,30 @@ class Alien extends GraphicalEntity{
 
 	}
 
-	addAlienCockpit(radius, Segments){
+	addAlienCockpit(radius, Segments, material){
 		'use strict'
-		var geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 5, 1.8)
-		var mesh= new THREE.Mesh(geometry, this.material)
+		var geometry= new THREE.SphereGeometry(radius, Segments, Segments, 0, Math.PI * 2, 0, 1.8)
+		var mesh= new THREE.Mesh(geometry, material)
 		mesh.position.set(0,2,0)
+
 		this.add(mesh);
+	}
+
+	changeMaterial(flag){
+		if (flag){
+			this.cockpitMaterial=this.gcockpitMaterial
+			this.material=this.gouraudMaterial //game entity
+		}
+		else{
+			this.cockpitMaterial=this.pcockpitMaterial
+			this.material=this.phongMaterial
+		}
+		for (var i = 0; i < this.children.length-1; i++) {
+			//console.log(this.children[i])
+			this.children[i].material=this.material //game entity
+		}
+		this.children[this.children.length-1].material=this.cockpitMaterial
+
 	}
 
 

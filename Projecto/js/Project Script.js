@@ -7,11 +7,11 @@ var aspectRatio=gameHeight/gameWidth;
 var bullet;
 var clockBullet;
 var materialArray=[]
-var collidables=[]
 var B_up = true;
 var delta;
 var first=true;
-var game;
+var game, cameraControls;
+var phongGouraud=true;
 
 
 function render(){
@@ -23,7 +23,7 @@ function animate() {
 	//animation function
 	'use strict'
 	game.updateElements();
-//	cameraControls.update();
+	cameraControls.update();
 	render()
 	requestAnimationFrame(animate);
 
@@ -37,7 +37,7 @@ function init(){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
 	//game.js vv
-	game=new Game(600,400)
+	game=new Game(gameWidth,gameHeight)
 	//createScenery();
 	//game.js ^^
 	render();
@@ -82,6 +82,10 @@ function onKeyDown(e){
 			onResize();
 			break;
 
+		case 71:
+			game.changeMaterials(phongGouraud);
+			phongGouraud=!phongGouraud;
+			break;
 
 		case 37://left arrow
 			if(game.ship.getAcceleration()!=-500)
@@ -94,11 +98,12 @@ function onKeyDown(e){
 				game.ship.setAcceleration(500);
 			break;
 		case 66://B
-			delta=game.clockBullet.getDelta();
-			if((delta>0.1 && B_up)||first){
+			delta+=game.clockBullet.getDelta();
+			if((delta>0.2 && B_up)||first){
 				first=false;
 				B_up=false;
-				game.shoot();
+				game.shoot(phongGouraud);
+				delta=0
 				}
 			break;
 	}
@@ -166,31 +171,6 @@ function onResize(){
 ---------------------------------------------------------------------------------
 
 
-/*
----------------------------------------------------------------------------------
-								Lighting
----------------------------------------------------------------------------------
-
-function createLight(){
-	ambientLight = new THREE.AmbientLight(0xffffff);
-    scene.add(ambientLight);
-/*
-
-	var spotLight = new THREE.SpotLight(0xffffff, 1, 100000, Math.PI/2, 0, 0);
-
-	spotLight.position.set(250,100,0);
-	spotLight.castShadow = true;
-
-	spotLight.shadow.mapSize.width = 1024;
-	spotLight.shadow.mapSize.height = 1024;
-
-	spotLight.shadow.game.currentCamera.near = 500;
-	spotLight.shadow.game.currentCamera.far = 4000;
-	spotLight.shadow.game.currentCamera.fov = 90;
-
-	scene.add(spotLight);
-	}
-*/
 
 /*
 function createScenery(){
