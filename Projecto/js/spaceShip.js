@@ -30,9 +30,18 @@ class spaceShip extends GraphicalEntity{
 
 	addShipBody(obj){
 		//adds the ship body to the ship
-		var geometry = new THREE.BoxGeometry( 10, 10, 30);
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(
+								new THREE.Vector3(-5,-5,-15),new THREE.Vector3(-5,5,-15), new THREE.Vector3(5,5,-15), new THREE.Vector3(5,-5,-15),
+								new THREE.Vector3(-5,-5,15), new THREE.Vector3(-5,5,15), new THREE.Vector3(5,5,15), new THREE.Vector3(5,-5,15)
+		);
+		geometry.faces.push(
+			new THREE.Face3(0,1,2),new THREE.Face3(2,3,0),new THREE.Face3(0,1,4),new THREE.Face3(4,1,5),new THREE.Face3(1,2,5),new THREE.Face3(2,5,6),
+			new THREE.Face3(2,3,6),new THREE.Face3(3,6,7),new THREE.Face3(4,5,6),new THREE.Face3(6,7,4),new THREE.Face3(4,7,3),new THREE.Face3(4,3,0)
+		)
+		geometry.computeFaceNormals();
 		var mesh = new THREE.Mesh(geometry, this.material);
-
+		mesh.material.side=THREE.DoubleSide;
 		obj.add(mesh);
 	}
 /*
@@ -55,7 +64,7 @@ class spaceShip extends GraphicalEntity{
 
 		obj.add(mesh);
 
-		geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);		
+		geometry = new THREE.SphereGeometry(4,10, 10, 0,Math.PI, 0 ,Math.PI/2);
 		mesh = new THREE.Mesh(geometry, this.cockpitMaterial);
 
 		mesh.rotation.x=-Math.PI/2;
@@ -67,11 +76,12 @@ class spaceShip extends GraphicalEntity{
 
 	addShipFront(obj){
 		//adds an aerodynamic front to the ship
-		var geometry = new THREE.ConeGeometry( 7, 10, 4);
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3(-5,-5,-15),new THREE.Vector3(-5,5,-15), new THREE.Vector3(5,5,-15), new THREE.Vector3(5,-5,-15), new THREE.Vector3(0,0,-25));
+		geometry.faces.push(new THREE.Face3(0,1,4),new THREE.Face3(1,2,4),new THREE.Face3(2,3,4),new THREE.Face3(3,0,4));
+		geometry.computeFaceNormals();
 		var mesh = new THREE.Mesh(geometry, this.material);
-		mesh.rotation.set(-Math.PI/2, Math.PI/4,0);
-		mesh.position.z=-20;
-
+		mesh.material.side=THREE.DoubleSide;
 		obj.add(mesh);
 	}
 
@@ -122,12 +132,18 @@ class spaceShip extends GraphicalEntity{
 	addShipTail(obj){
 		//adds a booster to the ship
 
-		var geometry = new THREE.CylinderGeometry( 5, 7, 4, 4, 10, false);
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(
+								new THREE.Vector3(0,5,15),new THREE.Vector3(5,0,15), new THREE.Vector3(0,-5,15), new THREE.Vector3(-5,0,15),
+								new THREE.Vector3(0,7,19), new THREE.Vector3(7,0,19), new THREE.Vector3(0,-7,19), new THREE.Vector3(-7,0,19)
+		);
+		geometry.faces.push(
+			new THREE.Face3(0,1,2),new THREE.Face3(2,3,0),new THREE.Face3(0,1,4),new THREE.Face3(4,1,5),new THREE.Face3(1,2,5),new THREE.Face3(2,5,6),
+			new THREE.Face3(2,3,6),new THREE.Face3(3,6,7),new THREE.Face3(4,5,6),new THREE.Face3(6,7,4),new THREE.Face3(4,7,3),new THREE.Face3(4,3,0)
+		)
+		geometry.computeFaceNormals()
 		var mesh = new THREE.Mesh(geometry, this.material);
-
-		mesh.position.z=17;
-		mesh.rotation.set(Math.PI,Math.PI/2,Math.PI/2)
-
+		mesh.material.side=THREE.DoubleSide;
 		obj.add(mesh);
 	}
 
@@ -147,7 +163,7 @@ class spaceShip extends GraphicalEntity{
 	}
 
 	processCollision(graphEnt){
-		
+
 	}
 
 	calculatePos(delta){
