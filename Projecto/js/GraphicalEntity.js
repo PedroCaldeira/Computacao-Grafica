@@ -1,12 +1,10 @@
 class GraphicalEntity extends THREE.Object3D{
 
 
-	constructor(speed_x, speed_z,x,y,z,radius, pMaterial, gMaterial,bMaterial){
+	constructor(speed_x, speed_z,x,y,z,radius,materials){
 		super()
-		this.phongMaterial=pMaterial;
-		this.material=this.phongMaterial
-		this.gouraudMaterial=gMaterial;
-		this.basicMaterial=bMaterial
+		this.materials=materials;
+		this.material=this.materials["phong"];
 		this.position.set(x,y,z);
 		this.speed_x=speed_x
 		this.speed_z=speed_z
@@ -45,7 +43,6 @@ class GraphicalEntity extends THREE.Object3D{
 		this.tentativepos_z=this.position.z+this.speed_z*delta
 	}
 
-	changeMaterial(flag){}
 	limitsCheck(side){
 		if (side=="width"){
 			if(Math.abs(this.tentativepos_x)+this.collisionRadius > gameWidth/2){
@@ -59,6 +56,13 @@ class GraphicalEntity extends THREE.Object3D{
 			}
 		}
 		return false;
+
+	}
+	changeMaterial(flag){
+		this.material=this.materials[flag]
+		for (var i = 0; i < this.children.length; i++) {
+			this.children[i].material=this.material
+		}
 
 	}
 }

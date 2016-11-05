@@ -1,11 +1,8 @@
 class Alien extends GraphicalEntity{
-	constructor(x,y,z, pmaterial, pcockpitMaterial, gmaterial, gcockpitMaterial, bmaterial, bcockpitMaterial){
+	constructor(x,y,z, materials){
 
-		super(0,0,x,y,z,20*0.72, pmaterial, gmaterial, bmaterial)
-		this.gcockpitMaterial=gcockpitMaterial
-		this.pcockpitMaterial=pcockpitMaterial
-		this.bcockpitMaterial=bcockpitMaterial
-		this.cockpitMaterial=pcockpitMaterial
+		super(0,0,x,y,z,20*0.72, materials)
+		this.cockpitMaterial=this.materials["phongCock"]
 		this.setInitialMovement()
 		this.radius=20
 		this.segments=25;
@@ -55,18 +52,8 @@ class Alien extends GraphicalEntity{
 	}
 
 	changeMaterial(flag){
-		if (flag){
-			this.cockpitMaterial=this.gcockpitMaterial
-			this.material=this.gouraudMaterial //game entity
-		}
-		else{
-			this.cockpitMaterial=this.pcockpitMaterial
-			this.material=this.phongMaterial
-		}
-		for (var i = 0; i < this.children.length-1; i++) {
-			//console.log(this.children[i])
-			this.children[i].material=this.material //game entity
-		}
+		super.changeMaterial(flag);
+		this.cockpitMaterial=this.materials[flag+"Cock"]
 		this.children[this.children.length-1].material=this.cockpitMaterial
 
 	}

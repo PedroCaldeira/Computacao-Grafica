@@ -6,12 +6,10 @@ var gameWidth=600;
 var aspectRatio=gameHeight/gameWidth;
 var bullet;
 var clockBullet;
-var materialArray=[]
 var B_up = true;
 var delta;
 var first=true;
 var game, cameraControls;
-var phongGouraud=true;
 
 
 function render(){
@@ -83,10 +81,14 @@ function onKeyDown(e){
 			break;
 
 		case 71:
-			game.changeMaterials(phongGouraud);
-			phongGouraud=!phongGouraud;
+			game.changeMaterials("G");
 			break;
-
+		case 76:
+			game.changeMaterials("L");
+			break;
+		case 78:
+			game.chichiCama();
+			break;
 		case 37://left arrow
 			if(game.ship.getAcceleration()!=-500)
 				game.ship.setAcceleration(-500);
@@ -102,7 +104,7 @@ function onKeyDown(e){
 			if((delta>0.2 && B_up)||first){
 				first=false;
 				B_up=false;
-				game.shoot(phongGouraud);
+				game.shoot();
 				delta=0
 				}
 			break;

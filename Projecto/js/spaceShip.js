@@ -1,9 +1,7 @@
 class spaceShip extends GraphicalEntity{
-	constructor(x,y,z, pmainMaterial, pcockpitMaterial, gmainMaterial, gcockpitMaterial){
-		super(0,0, x,y,z,25, pmainMaterial, gmainMaterial)
-		this.pcockpitMaterial=pcockpitMaterial
-		this.gcockpitMaterial=gcockpitMaterial
-		this.cockpitMaterial=pcockpitMaterial
+	constructor(x,y,z,materials){
+		super(0,0, x,y,z,25, materials)
+		this.cockpitMaterial=this.materials["phongCock"]
 		this.acceleration=0;
 		this.ship=new THREE.Object3D();
 		this.addShipBody(this.ship);
@@ -149,10 +147,11 @@ class spaceShip extends GraphicalEntity{
 
 
 	changeMaterial(flag){
+		super.changeMaterial();
 		if (flag)
-			this.cockpitMaterial=this.gcockpitMaterial
+			this.cockpitMaterial=this.materials["gouraudCock"];
 		else
-			this.cockpitMaterial=this.pcockpitMaterial
+			this.cockpitMaterial=this.materials["phongCock"]
 
 	}
 
@@ -177,14 +176,8 @@ class spaceShip extends GraphicalEntity{
 	}
 
 	changeMaterial(flag){
-		if (flag){
-			this.material=this.gouraudMaterial
-		}
-		else{
-			this.material=this.phongMaterial
-		}
+		this.material=this.materials[flag]
 		for (var i = 0; i < this.ship.children.length; i++) {
-			//console.log(this.children[i])
 			this.ship.children[i].material=this.material
 		}
 
