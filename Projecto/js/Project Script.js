@@ -80,6 +80,9 @@ function onKeyDown(e){
 			onResize();
 			break;
 
+		case 67:
+			game.chichiCamaEstrelitas();
+			break;
 		case 71:
 			game.changeMaterials("G");
 			break;

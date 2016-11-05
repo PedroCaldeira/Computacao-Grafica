@@ -3,6 +3,7 @@ class Game{
 
 	constructor(gameWidth, gameHeight){
 		this.flag="phong"
+		this.stars=[]
 		this.initialCamera;
 		this.perspectiveCamera;
 		this.followingCamera;
@@ -206,7 +207,7 @@ class Game{
 
 	createLighting(){
 		this.createSun();
-		//this.createStars();
+		this.createStars();
 	}
 
 	createSun(){
@@ -215,6 +216,18 @@ class Game{
 		this.sun.target= this.field;
 		this.scene.add(this.sun)
 	}
+
+	createStars(){
+		for(var i =0; i<6;i++){
+			this.stars.push(new THREE.SpotLight( 0xffffff, 0.8 ))
+		}
+		
+		for(var i =0; i<6;i++){
+			this.stars[i].position.set(200+i,200+i,0)
+			this.stars[i].target=this.field;
+			this.scene.add(this.stars[i])
+		}
+}
 
 	shoot(){
 		var bullet=new Bullet(this.ship.position.x,this.ship.position.y,this.ship.position.z-30,0,-200, this.bulletMaterials, this.flag)
@@ -248,5 +261,15 @@ class Game{
 			this.sun.intensity=0;
 		else
 			this.sun.intensity=0.8
+	}
+
+//http://www.nestle-ea.com/asset-library/PublishingImages/our%20countries/Estrelitas.png
+	chichiCamaEstrelitas(){
+		for(var i=0;i<this.stars.length;i++){
+			if(this.stars[i].intensity!=0)
+				this.stars[i].intensity=0;
+			else
+				this.stars[i].intensity=0.8
+		}
 	}
 }	
