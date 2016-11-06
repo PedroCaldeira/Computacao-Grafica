@@ -2,7 +2,7 @@ class Alien extends GraphicalEntity{
 	constructor(x,y,z, materials){
 
 		super(0,0,x,y,z,20*0.72, materials)
-		this.cockpitMaterial=this.materials["phongCock"]
+		this.cockpitMaterial=this.materials["phongCockpit"]
 		this.setInitialMovement()
 		this.radius=20
 		this.segments=25;
@@ -51,13 +51,12 @@ class Alien extends GraphicalEntity{
 		this.add(mesh);
 	}
 
-	changeMaterial(flag){
-		super.changeMaterial(flag);
-		this.cockpitMaterial=this.materials[flag+"Cock"]
+	changeMaterial(type){
+		super.changeMaterial(type);
+		this.cockpitMaterial=this.materials[type+"Cockpit"]
 		this.children[this.children.length-1].material=this.cockpitMaterial
 
 	}
-
 
 	processCollision(graphEnt){
 		if (graphEnt instanceof Alien){
@@ -71,9 +70,7 @@ class Alien extends GraphicalEntity{
 			//game.scene.remove(this)
 			//game.collidables.splice(game.collidables.indexOf(this),1)
 		}
-
 	}
-
 
 	calculatePos(delta){
 		super.calculatePos(delta)
@@ -87,5 +84,4 @@ class Alien extends GraphicalEntity{
 		}
 	}
 
-	
 }

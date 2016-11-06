@@ -8,7 +8,8 @@ var bullet;
 var clockBullet;
 var B_up = true;
 var delta;
-var first=true;
+var first=true, illumination=true;
+var illuType="phong"
 var game, cameraControls;
 
 
@@ -63,20 +64,11 @@ function onKeyDown(e){
 			break;
 
 
-		case 49: //pressed "1" Change game.currentCamera (defaultCamera)
-			game.currentCamera=game.initialCamera;
-			onResize();
-			break;
-
-
-		case 50://pressed "2" Change game.currentCamera (default game.currentCamera)
-			game.currentCamera=game.perspectiveCamera;
-			onResize();
-			break;
-
-
-		case 51://pressed "3" Change game.currentCamera
-			game.currentCamera=game.followingCamera;
+		case 49: //change cameras
+		case 50:
+		case 51:
+		case 52:
+			game.changeCamera(e.keyCode-48);
 			onResize();
 			break;
 
@@ -84,10 +76,20 @@ function onKeyDown(e){
 			game.chichiCamaEstrelitas();
 			break;
 		case 71:
-			game.changeMaterials("G");
+			if (illuType=="phong")
+				illuType="gouraud"
+			else if (illuType=="gouraud")
+				illuType="phong"
+			if (illumination)
+				game.changeMaterials(illuType);
 			break;
 		case 76:
-			game.changeMaterials("L");
+			if (illumination)
+				illuType="basic"
+			else
+				illuType="phong"
+			game.changeMaterials(illuType);
+			illumination=!illumination
 			break;
 		case 78:
 			game.chichiCama();
@@ -107,7 +109,7 @@ function onKeyDown(e){
 			if((delta>0.2 && B_up)||first){
 				first=false;
 				B_up=false;
-				game.shoot();
+				game.shoot(illuType);
 				delta=0
 				}
 			break;

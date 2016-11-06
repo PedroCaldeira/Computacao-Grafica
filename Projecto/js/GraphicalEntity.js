@@ -58,8 +58,8 @@ class GraphicalEntity extends THREE.Object3D{
 		return false;
 
 	}
-	changeMaterial(flag){
-		this.material=this.materials[flag]
+	changeMaterial(type){
+		this.material=this.materials[type]
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].material=this.material
 		}

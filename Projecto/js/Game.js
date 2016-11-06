@@ -2,14 +2,7 @@ class Game{
 	//
 
 	constructor(gameWidth, gameHeight){
-		this.flag="phong"
-		this.stars=[]
-		this.initialCamera;
-		this.perspectiveCamera;
-		this.followingCamera;
-		this.currentCamera;
-		this.scene;
-		this.field;
+		this.stars=[]	
 		this.gameWidth=gameWidth
 		this.gameHeight=gameHeight
 		this.yLineup=30
@@ -19,7 +12,7 @@ class Game{
 		this.clockBullet=new THREE.Clock();
 		this.bulletMaterials={}
 		this.createScene();
-		cameraControls = new THREE.TrackballControls( this.perspectiveCamera );
+		cameraControls = new THREE.TrackballControls( this.debugCamera );
 		cameraControls.target.set( 0, 0, 0 )
 	}
 
@@ -102,9 +95,9 @@ class Game{
 		materials["phong"]= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
 		materials["gouraud"]= new THREE.MeshLambertMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
 		materials["basic"]= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
-		materials["phongCock"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
-		materials["gouraudCock"]= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
-		materials["basicCock"]= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		materials["phongCockpit"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		materials["gouraudCockpit"]= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		materials["basicCockpit"]= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
 		
 		for( var i in materials){
 			this.materialArray.push(materials[i])
@@ -167,42 +160,47 @@ class Game{
 	}
 
 	createCameras(){
-		this.createInitialCamera(0,100,0);
-		this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,10,500);
-		this.createFollowingCamera(90,window.innerWidth/window.innerHeight,25,600,this.ship);
+		this.initialCamera=this.createOrthographicCamera(0,100,0, this.gameWidth, this.gameHeight);
+		this.perspectiveCamera =this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,10,500, 0, 300, 200);
+		this.followingCamera= this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,25,600, 0, 50, 40);
+		this.followingCamera.lookAt(new THREE.Vector3( 0,0,-60))
+		this.ship.add(this.followingCamera)
+		this.debugCamera=this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,25,600, 0, 0, 200);
 		this.currentCamera=this.initialCamera;
 	}
 
-	createInitialCamera(x,y,z){
+	createOrthographicCamera(x,y,z,Width,Height){
 		'use strict';
 		var windowAspectRatio=window.innerHeight/window.innerWidth;
-
+		var camera;
 		//if window height is thiner than the field aspect ratio or something that I can't express
 		if(windowAspectRatio>aspectRatio){
-			this.initialCamera = new THREE.OrthographicCamera(-this.gameWidth/1.5,this.gameWidth/1.5,this.gameWidth*windowAspectRatio/1.5,-this.gameWidth*windowAspectRatio/1.5, 1, 1000 );
+			camera = new THREE.OrthographicCamera(-Width/1.5,Width/1.5,Width*windowAspectRatio/1.5,-Width*windowAspectRatio/1.5, 1, 1000 );
 		}
 		else{
-			this.initialCamera = new THREE.OrthographicCamera(-this.gameHeight/windowAspectRatio/1.5,this.gameHeight/windowAspectRatio/1.5,this.gameHeight/1.5,-this.gameHeight/1.5, 1, 1000 );
+			camera = new THREE.OrthographicCamera(-Height/windowAspectRatio/1.5,Height/windowAspectRatio/1.5,Height/1.5,-Height/1.5, 1, 1000 );
 		}
-		this.initialCamera.position.set(x,y,z);
-		this.initialCamera.lookAt(this.scene.position);
-		
-
-		
+		camera.position.set(x,y,z);
+		camera.lookAt(this.scene.position);
+		return camera		
 	}
 
-	createPerspectiveCamera(fov,ratio,near,far){
-		this.perspectiveCamera = new THREE.PerspectiveCamera(fov,ratio,near,far);
-		this.perspectiveCamera.position.set(0,300,200);
-		this.perspectiveCamera.lookAt(this.scene.position);
+	createPerspectiveCamera(fov,ratio,near,far,x,y,z){
+		var camera = new THREE.PerspectiveCamera(fov,ratio,near,far);
+		camera.position.set(x,y,z);
+		camera.lookAt(this.scene.position);
+		return camera
 		
 	}
-
-	createFollowingCamera(fov,ratio,near,far,object){
-		this.followingCamera = new THREE.PerspectiveCamera(fov,ratio,near,far);
-		object.add(this.followingCamera)
-		this.followingCamera.position.set(0,50,40)
-		this.followingCamera.lookAt(new THREE.Vector3( 0,0,-60))
+	changeCamera(cameraNumber){
+		if (cameraNumber==1)
+			this.currentCamera=this.initialCamera
+		else if (cameraNumber==2)
+			this.currentCamera=this.perspectiveCamera
+		else if (cameraNumber==3)
+			this.currentCamera=this.followingCamera
+		else if (cameraNumber==4)
+			this.currentCamera=this.debugCamera
 	}
 
 	createLighting(){
@@ -219,40 +217,29 @@ class Game{
 
 	createStars(){
 		for(var i =0; i<6;i++){
-			this.stars.push(new THREE.SpotLight( 0xffffff, 0.8 ))
+			this.stars.push(new THREE.PointLight( 0xffffff, 0.1 ))
 		}
 		
 		for(var i =0; i<6;i++){
-			this.stars[i].position.set(200+i,200+i,0)
+			this.stars[i].position.set(Math.floor(Math.random()*gameWidth)- gameWidth/2,Math.floor(Math.random()*200)-100,Math.floor(Math.random()*gameHeight)- gameHeight/2)
+			//var geometry = new THREE.SphereGeometry(4,10, 10);
+			//var mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: 0x00eeee, wireframe: true}));
+			//this.stars[i].add(mesh)
 			this.stars[i].target=this.field;
 			this.scene.add(this.stars[i])
 		}
 }
 
-	shoot(){
-		var bullet=new Bullet(this.ship.position.x,this.ship.position.y,this.ship.position.z-30,0,-200, this.bulletMaterials, this.flag)
+	shoot(illutype){
+		var bullet=new Bullet(this.ship.position.x,this.ship.position.y,this.ship.position.z-30,0,-200, this.bulletMaterials, illutype)
 		this.collidables.push(bullet)
 		this.scene.add(bullet)
 	}
 
 	changeMaterials(type){
-		if(type=="G") {
-			if(this.flag=="phong")
-				this.flag="gouraud"
-			else
-				this.flag="phong"
-		}
-		else{
-			if(this.flag=="basic")
-				this.flag="phong"
-			else
-				this.flag="basic"
-		}
-
-			
-		this.field.children[0].material=this.fieldMaterials[this.flag]
+		this.field.children[0].material=this.fieldMaterials[type]
 		for (var i = 0; i < this.collidables.length; i++) {
-			this.collidables[i].changeMaterial(this.flag)
+			this.collidables[i].changeMaterial(type)
 			}
 	}
 
@@ -269,7 +256,7 @@ class Game{
 			if(this.stars[i].intensity!=0)
 				this.stars[i].intensity=0;
 			else
-				this.stars[i].intensity=0.8
+				this.stars[i].intensity=0.1
 		}
 	}
 }	
