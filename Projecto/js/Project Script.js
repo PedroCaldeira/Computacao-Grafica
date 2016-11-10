@@ -73,7 +73,7 @@ function onKeyDown(e){
 			break;
 
 		case 67:
-			game.chichiCamaEstrelitas();
+			game.TurnOffEstrelitas();
 			break;
 		case 71:
 			if (illuType=="phong")
@@ -92,7 +92,7 @@ function onKeyDown(e){
 			illumination=!illumination
 			break;
 		case 78:
-			game.chichiCama();
+			game.TurnOff();
 			break;
 		case 37://left arrow
 			if(game.ship.getAcceleration()!=-500)

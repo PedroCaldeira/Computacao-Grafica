@@ -247,7 +247,7 @@ class Game{
 			}
 	}
 
-	chichiCama(){
+	TurnOff(){
 		if(this.sun.intensity!=0)
 			this.sun.intensity=0;
 		else
@@ -255,7 +255,7 @@ class Game{
 	}
 
 //http://www.nestle-ea.com/asset-library/PublishingImages/our%20countries/Estrelitas.png
-	chichiCamaEstrelitas(){
+	TurnOffEstrelitas(){
 		for(var i=0;i<this.stars.length;i++){
 			if(this.stars[i].intensity!=0)
 				this.stars[i].intensity=0;
