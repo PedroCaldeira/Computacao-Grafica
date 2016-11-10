@@ -137,7 +137,7 @@ class spaceShip extends GraphicalEntity{
 		);
 		geometry.faces.push(
 			new THREE.Face3(0,1,2),new THREE.Face3(2,3,0),new THREE.Face3(0,1,4),new THREE.Face3(4,1,5),new THREE.Face3(1,2,5),new THREE.Face3(2,5,6),
-			new THREE.Face3(2,3,6),new THREE.Face3(3,6,7),new THREE.Face3(4,5,6),new THREE.Face3(6,7,4),new THREE.Face3(4,7,3),new THREE.Face3(4,3,0)
+			new THREE.Face3(2,3,6),new THREE.Face3(3,6,7),new THREE.Face3(4,7,3),new THREE.Face3(4,3,0)
 		)
 		geometry.computeFaceNormals()
 		var mesh = new THREE.Mesh(geometry, this.material);

@@ -2,7 +2,7 @@ class Game{
 	//
 
 	constructor(gameWidth, gameHeight){
-		this.stars=[]	
+		this.stars=[]
 		this.gameWidth=gameWidth
 		this.gameHeight=gameHeight
 		this.yLineup=30
@@ -30,7 +30,7 @@ class Game{
 
 	initializeStuff(){
 
-		this.bulletMaterials["phong"] = new THREE.MeshPhongMaterial({ color: 0x00eeee, wireframe: true});
+		this.bulletMaterials["phong"] = new THREE.MeshPhongMaterial({ color: 0x00eeee, wireframe: true, shininess:10,specular:0xffffff});
 		this.bulletMaterials["gouraud"]= new THREE.MeshLambertMaterial({ color: 0x00eeee, wireframe: true});
 		this.bulletMaterials["basic"]= new THREE.MeshBasicMaterial({ color: 0x00eeee, wireframe: true});
 		for(var i in this.bulletMaterials){
@@ -44,7 +44,7 @@ class Game{
 		var materials={}
 		this.field = new THREE.Object3D();
 
-		materials["phong"] = new THREE.MeshPhongMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
+		materials["phong"] = new THREE.MeshPhongMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide, shininess:10,specular:0xffffff});
 		materials["gouraud"] = new THREE.MeshLambertMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
 		materials["basic"] = new THREE.MeshBasicMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
 		for( var i in materials){
@@ -64,18 +64,18 @@ class Game{
 
 		this.createShip(0,this.yLineup,130);
 
-		
+
 		this.createAliens(5,3);
 		//this.createShields(4);
 	}
 
 	createShip(x,y,z){
 		var materials={}
-		materials["phong"]= new THREE.MeshPhongMaterial({ color: 0x0000ff, wireframe: true, side: THREE.DoubleSide})
+		materials["phong"]= new THREE.MeshPhongMaterial({ color: 0x0081b4, wireframe: true, side: THREE.DoubleSide, shininess:10,specular:0xffffff})
 		//var pcockpitMaterial= new THREE.MeshPhongMaterial({ color: 0x00ffff, wireframe: true, side: THREE.DoubleSide})
-		materials["gouraud"]= new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: true, side: THREE.DoubleSide})
+		materials["gouraud"]= new THREE.MeshLambertMaterial({ color: 0x0081b4, wireframe: true, side: THREE.DoubleSide})
 		//var gcockpitMaterial= new THREE.MeshLambertMaterial({ color: 0x00ffff, wireframe: true, side: THREE.DoubleSide})
-		materials["basic"]= new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true, side: THREE.DoubleSide})
+		materials["basic"]= new THREE.MeshBasicMaterial({ color: 0x0081b4, wireframe: true, side: THREE.DoubleSide})
 
 
 		for( var i in materials){
@@ -92,13 +92,13 @@ class Game{
 		var x= this.gameWidth/(aliensPerRow+1)
 		var z= this.gameHeight/2/(rows+1)
 		var materials= {}
-		materials["phong"]= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
+		materials["phong"]= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide, shininess:40,specular:0xffffff});
 		materials["gouraud"]= new THREE.MeshLambertMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
 		materials["basic"]= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
-		materials["phongCockpit"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		materials["phongCockpit"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide, shininess:40,specular:0xffffff});
 		materials["gouraudCockpit"]= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
 		materials["basicCockpit"]= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
-		
+
 		for( var i in materials){
 			this.materialArray.push(materials[i])
 		}
@@ -139,7 +139,7 @@ class Game{
 			this.collidables[i].calculatePos(delta)
 		}
 		for (var i = 0; i < this.collidables.length; i++) {
-			for (var j = i+1; j < this.collidables.length; j++){ 
+			for (var j = i+1; j < this.collidables.length; j++){
 				if (this.collidables[i].hasCollision(this.collidables[j])){
 					this.collidables[i].processCollision(this.collidables[j])
 					this.collidables[j].processCollision(this.collidables[i])
@@ -182,7 +182,7 @@ class Game{
 		}
 		camera.position.set(x,y,z);
 		camera.lookAt(this.scene.position);
-		return camera		
+		return camera
 	}
 
 	createPerspectiveCamera(fov,ratio,near,far,x,y,z){
@@ -190,7 +190,7 @@ class Game{
 		camera.position.set(x,y,z);
 		camera.lookAt(this.scene.position);
 		return camera
-		
+
 	}
 	changeCamera(cameraNumber){
 		if (cameraNumber==1)
@@ -205,28 +205,32 @@ class Game{
 
 	createLighting(){
 		this.createSun();
-		this.createStars();
+		this.createStars(3,2);
 	}
 
 	createSun(){
 		this.sun= new THREE.DirectionalLight( 0xffffff, 0.8 );
-		this.sun.position.set(200,200,0)
+		this.sun.position.set(2,2,3)
 		this.sun.target= this.field;
 		this.scene.add(this.sun)
 	}
 
-	createStars(){
-		for(var i =0; i<6;i++){
-			this.stars.push(new THREE.PointLight( 0xffffff, 0.1 ))
-		}
-		
-		for(var i =0; i<6;i++){
-			this.stars[i].position.set(Math.floor(Math.random()*gameWidth)- gameWidth/2,Math.floor(Math.random()*200)-100,Math.floor(Math.random()*gameHeight)- gameHeight/2)
-			//var geometry = new THREE.SphereGeometry(4,10, 10);
-			//var mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: 0x00eeee, wireframe: true}));
-			//this.stars[i].add(mesh)
-			this.stars[i].target=this.field;
-			this.scene.add(this.stars[i])
+	createStars(starsPerRow, rows){
+		var x= this.gameWidth/(starsPerRow+1)
+		var z= this.gameHeight/(rows+1)
+
+
+		for (var r=1; r<=rows; r++ ){
+			for (var a=1;a<=starsPerRow; a++){
+				var star=new THREE.PointLight( 0xffffff, 0.1)
+				star.position.set(x*a-this.gameWidth/2, 3*this.yLineup, (-this.gameHeight/2)+z*r)
+				//var geometry = new THREE.SphereGeometry(4,10, 10);
+				//var mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: 0x00eeee, wireframe: true}));
+				//star.add(mesh)
+				this.stars.push(star)
+				this.scene.add(star)
+			}
+
 		}
 }
 
@@ -259,4 +263,4 @@ class Game{
 				this.stars[i].intensity=0.1
 		}
 	}
-}	
+}
