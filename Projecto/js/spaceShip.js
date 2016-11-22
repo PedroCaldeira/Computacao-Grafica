@@ -164,6 +164,10 @@ class spaceShip extends GraphicalEntity{
 			this.speed_x=0;
 	}
 
+	getShipGeometry(){
+		return this.ship.clone()
+	}
+
 	changeMaterial(type){
 		this.material=this.materials[type]
 		//this.cockpitMaterial=this.materials[type+"Cockpit"];

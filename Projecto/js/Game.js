@@ -24,7 +24,9 @@ class Game{
 		this.initializeStuff();
 		this.createField(0, 0, 0);
 		this.createCameras();
+		this.createLives(3);
 		this.createLighting()
+		this.createScenery()
 
 	}
 
@@ -44,9 +46,9 @@ class Game{
 		var materials={}
 		this.field = new THREE.Object3D();
 
-		materials["phong"] = new THREE.MeshPhongMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide, shininess:10,specular:0xffffff});
-		materials["gouraud"] = new THREE.MeshLambertMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
-		materials["basic"] = new THREE.MeshBasicMaterial({ color: 0x5c756b, wireframe: true, side: THREE.DoubleSide});
+		materials["phong"] = new THREE.MeshPhongMaterial({ color: 0x5c756b, wireframe: true/*, side: THREE.DoubleSide*/, shininess:10,specular:0xffffff});
+		materials["gouraud"] = new THREE.MeshLambertMaterial({ color: 0x5c756b, wireframe: true/*, side: THREE.DoubleSide*/});
+		materials["basic"] = new THREE.MeshBasicMaterial({ color: 0x5c756b, wireframe: true/*, side: THREE.DoubleSide*/});
 		for( var i in materials){
 			this.materialArray.push(materials[i])
 		}
@@ -63,6 +65,7 @@ class Game{
 		this.field.position.set(x,y,z);
 
 		this.createShip(0,this.yLineup,130);
+
 
 
 		this.createAliens(5,3);
@@ -161,12 +164,20 @@ class Game{
 
 	createCameras(){
 		this.initialCamera=this.createOrthographicCamera(0,100,0, this.gameWidth, this.gameHeight);
-		this.perspectiveCamera =this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,10,500, 0, 300, 200);
-		this.followingCamera= this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,25,600, 0, 50, 40);
+		this.perspectiveCamera =this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,10,1500, 0, 300, 200);
+		this.followingCamera= this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,25,1500, 0, 50, 40);
 		this.followingCamera.lookAt(new THREE.Vector3( 0,0,-60))
 		this.ship.add(this.followingCamera)
-		this.debugCamera=this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,25,600, 0, 0, 200);
+		this.debugCamera=this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,25,1800, 0, 0, 200);
 		this.currentCamera=this.initialCamera;
+		this.livesCamera=this.createOrthographicCamera(-this.gameWidth*2,0,-100, 200, 200)
+		this.livesCamera.lookAt(new THREE.Vector3(-this.gameWidth*2,-100,-100))
+
+		/*var camerashpere=new THREE.Mesh(new THREE.SphereGeometry(3, 22, 22,0, Math.PI * 2, 0, 0.8 ), this.bulletMaterials["phong"])
+		camerashpere.position.set(this.livesCamera.position.x,this.livesCamera.position.y, this.livesCamera.position.z)
+		this.scene.add(camerashpere)*/
+
+		
 	}
 
 	createOrthographicCamera(x,y,z,Width,Height){
@@ -203,6 +214,23 @@ class Game{
 			this.currentCamera=this.debugCamera
 	}
 
+
+
+	createScenery(){
+		var loader = new THREE.TextureLoader();
+		var texture = loader.load( 'stars.jpg' );
+		var material = new THREE.MeshBasicMaterial({map: texture})
+		material.depthTest = false;	//Para o z-buffer ignorar o background e mete lo la para tras (ou va, deixa-lo com o valor maximo)
+		material.depthWrite = false;
+		var geometry = new THREE.PlaneGeometry(2, 2, 0) 
+		var backgroundMesh = new THREE.Mesh(geometry, material );
+		this.backgroundScene = new THREE.Scene();
+        this.backgroundCamera = new THREE.Camera(); //predefinida= ortografica com left e bot = -1  e  right e top= 1
+        this.backgroundScene.add(this.backgroundCamera);
+        this.backgroundScene.add(backgroundMesh);
+
+	}
+
 	createLighting(){
 		this.createSun();
 		this.createStars(3,2);
@@ -211,7 +239,7 @@ class Game{
 	createSun(){
 		this.sun= new THREE.DirectionalLight( 0xffffff, 0.8 );
 		this.sun.position.set(2,2,3)
-		this.sun.target= this.field;
+		this.sun.target=this.scene;
 		this.scene.add(this.sun)
 	}
 
@@ -232,7 +260,20 @@ class Game{
 			}
 
 		}
-}
+	}
+	createLives(liveCount){
+		var x= this.livesCamera.position.x+this.livesCamera.left+50
+		console.log(x)
+		for (var i=0;i<liveCount;i++){
+			var light=new THREE.PointLight( 0xffffff, 0.5, 100)
+			var life= this.ship.getShipGeometry();
+			light.position.set(x, 0, 0)
+			life.position.set(x,-30,0)
+			this.scene.add(light)
+			this.scene.add(life)
+			x+=50
+		}
+	}
 
 	shoot(illutype){
 		var bullet=new Bullet(this.ship.position.x,this.ship.position.y,this.ship.position.z-30,0,-200, this.bulletMaterials, illutype)

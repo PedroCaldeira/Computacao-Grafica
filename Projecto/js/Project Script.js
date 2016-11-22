@@ -14,8 +14,17 @@ var game, cameraControls;
 
 
 function render(){
-	'use strict';
-	renderer.render(game.scene, game.currentCamera);
+        'use strict';
+        renderer.clear();
+        //
+
+        renderer.setViewport(0,0,window.innerWidth, window.innerHeight)
+        renderer.render(game.backgroundScene, game.backgroundCamera);
+        renderer.render(game.scene, game.currentCamera);
+        renderer.setViewport(0, 0,window.innerWidth/3, window.innerHeight/3)
+        renderer.render(game.scene, game.livesCamera);
+
+
 }
 
 function animate() {
@@ -34,6 +43,7 @@ function init(){
 	
 	renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.autoClear=false
 	document.body.appendChild(renderer.domElement);
 	//game.js vv
 	game=new Game(gameWidth,gameHeight)
