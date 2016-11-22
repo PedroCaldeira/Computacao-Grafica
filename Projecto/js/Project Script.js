@@ -14,13 +14,16 @@ var game, cameraControls;
 
 
 function render(){
-	'use strict';
-	renderer.clear();
-	renderer.setViewport(window.innerWidth/3, window.innerHeight/3,window.innerWidth/3, window.innerHeight/3)
-	renderer.render(game.scene, game.currentCamera);
+        'use strict';
+        renderer.clear();
+        //
 
-	renderer.setViewport(0,0,window.innerWidth, window.innerHeight)
-	renderer.render(game.scene, game.currentCamera);
+        renderer.setViewport(0,0,window.innerWidth, window.innerHeight)
+        renderer.render(game.backgroundScene, game.backgroundCamera);
+        renderer.render(game.scene, game.currentCamera);
+        renderer.setViewport(0, 0,window.innerWidth/3, window.innerHeight/3)
+        renderer.render(game.scene, game.livesCamera);
+
 
 }
 
@@ -37,10 +40,10 @@ function animate() {
 function init(){
 	//initial function, called upon page load
 	'use strict';
-
+	
 	renderer = new THREE.WebGLRenderer({ antialias: true });
-	renderer.autoClear=false
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.autoClear=false
 	document.body.appendChild(renderer.domElement);
 	//game.js vv
 	game=new Game(gameWidth,gameHeight)
@@ -169,12 +172,12 @@ function onResize(){
 	            game.currentCamera.bottom = -gameWidth*windowAspectRatio/1.5;
 			}
 		}
-
+		
 	}
 	else if (game.currentCamera instanceof THREE.PerspectiveCamera)
 		game.currentCamera.aspect=1/windowAspectRatio
-
-
+		
+	
 	game.currentCamera.updateProjectionMatrix();
 }
 
