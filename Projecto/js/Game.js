@@ -6,7 +6,8 @@ class Game{
 		this.gameWidth=gameWidth
 		this.gameHeight=gameHeight
 		this.yLineup=30
-		this.clock= new THREE.Clock();
+		this.clock= new THREE.Clock(false);
+		this.clock.start()
 		this.materialArray=[]
 		this.collidables=[]
 		this.clockBullet=new THREE.Clock();
@@ -141,6 +142,7 @@ class Game{
 	updateElements(){
 		var delta=this.clock.getDelta();
 
+
 		for (var i = 0; i < this.collidables.length; i++) {
 			this.collidables[i].calculatePos(delta)
 		}
@@ -163,6 +165,17 @@ class Game{
 		}
 
 
+	}
+
+	pause(bool){
+		if (bool){
+			console.log("stop")
+			this.clock.stop()
+		}
+		else{
+			console.log("start")
+			this.clock.start()
+		}
 	}
 
 	createCameras(){

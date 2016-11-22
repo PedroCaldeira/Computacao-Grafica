@@ -5,12 +5,12 @@ var gameHeight=400;
 var gameWidth=600;
 var aspectRatio=gameHeight/gameWidth;
 var bullet;
-var clockBullet;
 var B_up = true;
 var delta;
 var first=true, illumination=true;
 var illuType="phong"
 var game, cameraControls;
+var pauseBool=true;
 
 
 function render(){
@@ -108,6 +108,10 @@ function onKeyDown(e){
 			if(game.ship.getAcceleration()!=-500)
 				game.ship.setAcceleration(-500);
 			break;
+		case 83:
+			game.pause(pauseBool)
+			pauseBool=!pauseBool
+			break;
 
 
 		case 39://right arrow
@@ -177,7 +181,25 @@ function onResize(){
 	else if (game.currentCamera instanceof THREE.PerspectiveCamera){
 		game.currentCamera.aspect=1/windowAspectRatio
 	}
+	if(window.innerWidth > 0 && window.innerHeight > 0){ //kinda dull check
 
+			//if window height is thiner than the field aspect ratio
+			if (windowAspectRatio<=1){
+				game.livesCamera.left = -200/windowAspectRatio/1.5;
+	            game.livesCamera.right = 200/windowAspectRatio/1.5;;
+	            game.livesCamera.top = 200/1.5;
+	            game.livesCamera.bottom = -200 /1.5;
+
+			}
+			//otherwise
+			else{
+				game.livesCamera.left = -200/1.5;
+	            game.livesCamera.right = 200/1.5;
+	            game.livesCamera.top = 200*windowAspectRatio/1.5;
+	            game.livesCamera.bottom = -200*windowAspectRatio/1.5;
+			}
+		}
+/*
 	if (windowAspectRatio<=aspectRatio){
 		game.backgroundCamera.left = -1/windowAspectRatio;
         game.backgroundCamera.right = 1/windowAspectRatio;
@@ -193,7 +215,9 @@ function onResize(){
         game.backgroundCamera.bottom = -1*windowAspectRatio;
 	}
 		
+	game.backgroundCamera.updateProjectionMatrix();*/
 	game.livesCamera.updateProjectionMatrix();
+
 	game.currentCamera.updateProjectionMatrix();
 }
 
