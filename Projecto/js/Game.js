@@ -46,9 +46,9 @@ class Game{
 		var materials={}
 		this.field = new THREE.Object3D();
 
-		materials["phong"] = new THREE.MeshPhongMaterial({ color: 0x5c756b, wireframe: true/*, side: THREE.DoubleSide*/, shininess:10,specular:0xffffff});
-		materials["gouraud"] = new THREE.MeshLambertMaterial({ color: 0x5c756b, wireframe: true/*, side: THREE.DoubleSide*/});
-		materials["basic"] = new THREE.MeshBasicMaterial({ color: 0x5c756b, wireframe: true/*, side: THREE.DoubleSide*/});
+		materials["phong"] = new THREE.MeshPhongMaterial({ color: 0x5c756b, wireframe: true/**/, shininess:10,specular:0xffffff});
+		materials["gouraud"] = new THREE.MeshLambertMaterial({ color: 0x5c756b, wireframe: true/**/});
+		materials["basic"] = new THREE.MeshBasicMaterial({ color: 0x5c756b, wireframe: true/**/});
 		for( var i in materials){
 			this.materialArray.push(materials[i])
 		}
@@ -74,11 +74,14 @@ class Game{
 
 	createShip(x,y,z){
 		var materials={}
-		materials["phong"]= new THREE.MeshPhongMaterial({ color: 0x0081b4, wireframe: true, side: THREE.DoubleSide, shininess:10,specular:0xffffff})
-		//var pcockpitMaterial= new THREE.MeshPhongMaterial({ color: 0x00ffff, wireframe: true, side: THREE.DoubleSide})
-		materials["gouraud"]= new THREE.MeshLambertMaterial({ color: 0x0081b4, wireframe: true, side: THREE.DoubleSide})
-		//var gcockpitMaterial= new THREE.MeshLambertMaterial({ color: 0x00ffff, wireframe: true, side: THREE.DoubleSide})
-		materials["basic"]= new THREE.MeshBasicMaterial({ color: 0x0081b4, wireframe: true, side: THREE.DoubleSide})
+		materials["phong"]= new THREE.MeshPhongMaterial({ color: 0x0081b4, wireframe: true, shininess:10,specular:0xffffff})
+		materials["phongdouble"]= new THREE.MeshPhongMaterial({ color: 0x0081b4, wireframe: true, shininess:10,specular:0xffffff, side:THREE.DoubleSide})
+		//var pcockpitMaterial= new THREE.MeshPhongMaterial({ color: 0x00ffff, wireframe: true})
+		materials["gouraud"]= new THREE.MeshLambertMaterial({ color: 0x0081b4, wireframe: true})
+		materials["gourauddouble"]= new THREE.MeshLambertMaterial({ color: 0x0081b4, wireframe: true, side:THREE.DoubleSide})
+		//var gcockpitMaterial= new THREE.MeshLambertMaterial({ color: 0x00ffff, wireframe: true})
+		materials["basic"]= new THREE.MeshBasicMaterial({ color: 0x0081b4, wireframe: true})
+		materials["basicdouble"]= new THREE.MeshBasicMaterial({ color: 0x0081b4, wireframe: true, side:THREE.DoubleSide})
 
 
 		for( var i in materials){
@@ -95,12 +98,12 @@ class Game{
 		var x= this.gameWidth/(aliensPerRow+1)
 		var z= this.gameHeight/2/(rows+1)
 		var materials= {}
-		materials["phong"]= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide, shininess:40,specular:0xffffff});
-		materials["gouraud"]= new THREE.MeshLambertMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
-		materials["basic"]= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true, side: THREE.DoubleSide});
-		materials["phongCockpit"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide, shininess:40,specular:0xffffff});
-		materials["gouraudCockpit"]= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
-		materials["basicCockpit"]= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true, side: THREE.DoubleSide});
+		materials["phong"]= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, shininess:40,specular:0xffffff});
+		materials["gouraud"]= new THREE.MeshLambertMaterial({color: 0xff0000,  wireframe: true});
+		materials["basic"]= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true});
+		materials["phongCockpit"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, shininess:40,specular:0xffffff});
+		materials["gouraudCockpit"]= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true});
+		materials["basicCockpit"]= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true});
 
 		for( var i in materials){
 			this.materialArray.push(materials[i])

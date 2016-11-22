@@ -174,10 +174,26 @@ function onResize(){
 		}
 		
 	}
-	else if (game.currentCamera instanceof THREE.PerspectiveCamera)
+	else if (game.currentCamera instanceof THREE.PerspectiveCamera){
 		game.currentCamera.aspect=1/windowAspectRatio
+	}
+
+	if (windowAspectRatio<=aspectRatio){
+		game.backgroundCamera.left = -1/windowAspectRatio;
+        game.backgroundCamera.right = 1/windowAspectRatio;
+        game.backgroundCamera.top = 1;
+        game.backgroundCamera.bottom = -1;
+
+	}
+	//otherwise
+	else{
+		game.backgroundCamera.left = -1;
+        game.backgroundCamera.right = 1;
+        game.backgroundCamera.top = 1*windowAspectRatio;
+        game.backgroundCamera.bottom = -1*windowAspectRatio;
+	}
 		
-	
+	game.livesCamera.updateProjectionMatrix();
 	game.currentCamera.updateProjectionMatrix();
 }
 
