@@ -3,6 +3,7 @@ class spaceShip extends GraphicalEntity{
 		super(0,0, x,y,z,25, materials)
 		//this.cockpitMaterial=this.materials["phongCockpit"]
 		this.acceleration=0;
+		this.doublematerial=this.materials["phongdouble"]
 		this.ship=new THREE.Object3D();
 		this.addShipBody(this.ship);
 		//this.addShipTop(this.ship);
@@ -34,12 +35,11 @@ class spaceShip extends GraphicalEntity{
 								new THREE.Vector3(-5,-5,15), new THREE.Vector3(-5,5,15), new THREE.Vector3(5,5,15), new THREE.Vector3(5,-5,15)
 		);
 		geometry.faces.push(
-			new THREE.Face3(0,1,2),new THREE.Face3(2,3,0),new THREE.Face3(0,1,4),new THREE.Face3(4,1,5),new THREE.Face3(1,2,5),new THREE.Face3(2,5,6),
-			new THREE.Face3(2,3,6),new THREE.Face3(3,6,7),new THREE.Face3(4,5,6),new THREE.Face3(6,7,4),new THREE.Face3(4,7,3),new THREE.Face3(4,3,0)
+			new THREE.Face3(0,1,2),new THREE.Face3(2,3,0),new THREE.Face3(1,0,4),new THREE.Face3(1,4,5),new THREE.Face3(2,1,5),new THREE.Face3(2,5,6),
+			new THREE.Face3(3,2,6),new THREE.Face3(3,6,7),new THREE.Face3(5,4,6),new THREE.Face3(7,6,4),new THREE.Face3(7,4,3),new THREE.Face3(3,4,0)
 		)
 		geometry.computeFaceNormals();
 		var mesh = new THREE.Mesh(geometry, this.material);
-		mesh.material.side=THREE.DoubleSide;
 		obj.add(mesh);
 	}
 /*
@@ -79,7 +79,6 @@ class spaceShip extends GraphicalEntity{
 		geometry.faces.push(new THREE.Face3(0,1,4),new THREE.Face3(1,2,4),new THREE.Face3(2,3,4),new THREE.Face3(3,0,4));
 		geometry.computeFaceNormals();
 		var mesh = new THREE.Mesh(geometry, this.material);
-		mesh.material.side=THREE.DoubleSide;
 		obj.add(mesh);
 	}
 
@@ -96,10 +95,9 @@ class spaceShip extends GraphicalEntity{
 		geometry.faces.push( new THREE.Face3( 2, 3, 4 ) );
 		geometry.faces.push( new THREE.Face3( 2, 1, 4 ) );
 		geometry.computeFaceNormals()
-		var mesh = new THREE.Mesh( geometry, this.material ) ;
+		var mesh = new THREE.Mesh( geometry, this.doublematerial ) ;
 		mesh.rotation.x=-Math.PI/2
 		mesh.position.set( 15, 0, 0)
-		mesh.material.side=THREE.DoubleSide;
 
 		var mesh2= mesh.clone()
 		mesh2.rotation.y=Math.PI
@@ -118,7 +116,6 @@ class spaceShip extends GraphicalEntity{
 		geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
 
 		var mesh = new THREE.Mesh( geometry, this.material ) ;
-		mesh.material.side=THREE.DoubleSide;
 		var mesh2= mesh.clone()
 
 		mesh2.position.x-=40
@@ -140,8 +137,7 @@ class spaceShip extends GraphicalEntity{
 			new THREE.Face3(2,3,6),new THREE.Face3(3,6,7),new THREE.Face3(4,7,3),new THREE.Face3(4,3,0)
 		)
 		geometry.computeFaceNormals()
-		var mesh = new THREE.Mesh(geometry, this.material);
-		mesh.material.side=THREE.DoubleSide;
+		var mesh = new THREE.Mesh(geometry, this.doublematerial);
 		obj.add(mesh);
 	}
 
@@ -164,16 +160,17 @@ class spaceShip extends GraphicalEntity{
 			this.speed_x=0;
 	}
 
-	getShipGeometry(){
-		return this.ship.clone()
-	}
-
 	changeMaterial(type){
 		this.material=this.materials[type]
+		this.doublematerial=this.materials[type+"double"]
 		//this.cockpitMaterial=this.materials[type+"Cockpit"];
-		for (var i = 0; i < this.ship.children.length; i++) {
+		for (var i = 0; i < this.ship.children.length-2; i++) {
 			this.ship.children[i].material=this.material
 		}
+		this.ship.children[this.ship.children.length-3].material=this.doublematerial;
+		this.ship.children[this.ship.children.length-2].material=this.doublematerial;
+		this.ship.children[this.ship.children.length-1].material=this.doublematerial;
+
 
 
 	}
