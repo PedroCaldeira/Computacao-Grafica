@@ -78,7 +78,14 @@ class spaceShip extends GraphicalEntity{
 		geometry.vertices.push(new THREE.Vector3(-5,-5,-15),new THREE.Vector3(-5,5,-15), new THREE.Vector3(5,5,-15), new THREE.Vector3(5,-5,-15), new THREE.Vector3(0,0,-25));
 		geometry.faces.push(new THREE.Face3(0,1,4),new THREE.Face3(1,2,4),new THREE.Face3(2,3,4),new THREE.Face3(3,0,4));
 		geometry.computeFaceNormals();
+		var light= new THREE.SpotLight( 0x555555, 5, 300, 1.05, 0.25, 0.5 );
+		light.position.set( 0,0, -25 );
+		light.target.position.set(0,0,-100)
+		obj.add(light.target)
+
+
 		var mesh = new THREE.Mesh(geometry, this.material);
+		mesh.add(light)
 		obj.add(mesh);
 	}
 

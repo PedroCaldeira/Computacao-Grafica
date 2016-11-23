@@ -186,8 +186,8 @@ class Game{
 		this.ship.add(this.followingCamera)
 		this.debugCamera=this.createPerspectiveCamera(90,window.innerWidth/window.innerHeight,25,1800, 0, 0, 200);
 		this.currentCamera=this.initialCamera;
-		this.livesCamera=this.createOrthographicCamera(-this.gameWidth*2,0,-100, 200, 200)
-		this.livesCamera.lookAt(new THREE.Vector3(-this.gameWidth*2,-100,-100))
+		this.livesCamera=this.createOrthographicCamera(-this.gameWidth*8,0,-100, 200, 200)
+		this.livesCamera.lookAt(new THREE.Vector3(-this.gameWidth*8,-100,-100))
 
 		/*var camerashpere=new THREE.Mesh(new THREE.SphereGeometry(3, 22, 22,0, Math.PI * 2, 0, 0.8 ), this.bulletMaterials["phong"])
 		camerashpere.position.set(this.livesCamera.position.x,this.livesCamera.position.y, this.livesCamera.position.z)
@@ -229,6 +229,22 @@ class Game{
 		else if (cameraNumber==4)
 			this.currentCamera=this.debugCamera
 	}
+
+
+/*
+	createScenery(){
+		var texture=THREE.ImageUtils.loadTexture("./stars.jpg");
+		var material=new THREE.MeshBasicMaterial({map : texture, color : 0xffffff, wireframe: true });
+		//var world = new THREE.Mesh(new THREE.SphereGeometry(800, 64,64 ), material);
+		var world = new THREE.Mesh(new THREE.PlaneGeometry(4960 , 2178, 0) , material);
+		world.position.z=-this.gameHeight
+		world.rotation.x=-Math.PI/3
+		world.material.side =THREE.DoubleSide;
+		this.materialArray.push(material)
+
+		this.scene.add(world)
+
+	}*/
 
 
 
