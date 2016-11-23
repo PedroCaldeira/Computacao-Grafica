@@ -174,10 +174,13 @@ class spaceShip extends GraphicalEntity{
 	changeMaterial(type){
 		this.material=this.materials[type]
 		//this.cockpitMaterial=this.materials[type+"Cockpit"];
-		for (var i = 0; i < this.ship.children.length; i++) {
+		for (var i = 0; i < this.ship.children.length-2; i++) {
 			this.ship.children[i].material=this.material
 		}
+		this.ship.children[this.ship.children.length-3].material=this.materials[type+"double"]
 
+		this.ship.children[this.ship.children.length-2].material=this.materials[type+"double"]
+		this.ship.children[this.ship.children.length-1].material=this.materials[type+"double"]
 
 	}
 
