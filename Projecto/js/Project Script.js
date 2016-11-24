@@ -18,11 +18,14 @@ function render(){
         renderer.clear();
         //
         renderer.setViewport(0,0,window.innerWidth, window.innerHeight)
-        renderer.render(game.backgroundScene, game.backgroundCamera);
-        if (!pauseBool){
+        
+        if (!pauseBool && !game.gameover){
         	renderer.render(game.scene, game.currentCamera);
         	renderer.setViewport(0, 0,window.innerWidth/3, window.innerHeight/3)
         	renderer.render(game.scene, game.livesCamera);
+        }
+        else{
+        	renderer.render(game.backgroundScene, game.backgroundCamera);
         }
         
 
@@ -114,10 +117,17 @@ function onKeyDown(e){
 				game.ship.setAcceleration(-500);
 			break;
 		case 83:
-			pauseBool=!pauseBool
-			game.pause(pauseBool)
+			if(!game.gameover){
+				pauseBool=!pauseBool
+				game.pause(pauseBool)
+			}
 			break;
-
+		case 82:
+			if(!pauseBool && game.gameover){
+				game.restart()
+				illuType="phong"
+			}
+			break;
 
 		case 39://right arrow
 			if(game.ship.getAcceleration()!=500)

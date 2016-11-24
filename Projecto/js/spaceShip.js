@@ -154,7 +154,10 @@ class spaceShip extends GraphicalEntity{
 	}
 
 	processCollision(graphEnt){
-
+		console.log("cenas")
+		if (graphEnt instanceof Alien){
+			this.lifedecrease=true
+		}
 	}
 
 	calculatePos(delta){

@@ -2,6 +2,7 @@ class Game{
 	//
 
 	constructor(gameWidth, gameHeight){
+		
 		this.stars=[]
 		this.gameWidth=gameWidth
 		this.gameHeight=gameHeight
@@ -12,7 +13,11 @@ class Game{
 		this.collidables=[]
 		this.clockBullet=new THREE.Clock();
 		this.bulletMaterials={}
+		this.lifemodels=[]
 		this.createScene();
+		this.gameover=false
+
+		
 		cameraControls = new THREE.TrackballControls( this.debugCamera );
 		cameraControls.target.set( 0, 0, 0 )
 	}
@@ -25,9 +30,11 @@ class Game{
 		this.initializeStuff();
 		this.createField(0, 0, 0);
 		this.createCameras();
-		this.createLives(3);
+		this.lives=3
+		this.createLives(this.lives);
 		this.createLighting()
 		this.createScenery()
+		this.createBackground();
 
 	}
 
@@ -68,7 +75,7 @@ class Game{
 		this.createShip(0,this.yLineup,130);
 
 
-
+		
 		this.createAliens(5,3);
 		//this.createShields(4);
 	}
@@ -94,30 +101,23 @@ class Game{
 		this.collidables.push(this.ship)
 	}
 
-	createAliens(aliensPerRow, rows){
+	createAliens(){
 		//calculates the place of every alien and orders its construction
-		var x= this.gameWidth/(aliensPerRow+1)
-		var z= this.gameHeight/2/(rows+1)
-		var materials= {}
-		materials["phong"]= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, shininess:40,specular:0xffffff});
-		materials["gouraud"]= new THREE.MeshLambertMaterial({color: 0xff0000,  wireframe: true});
-		materials["basic"]= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true});
-		materials["phongCockpit"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, shininess:40,specular:0xffffff});
-		materials["gouraudCockpit"]= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true});
-		materials["basicCockpit"]= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true});
+		
+		this.alienMaterials= {}
+		this.alienMaterials["phong"]= new THREE.MeshPhongMaterial({color: 0xff0000,  wireframe: true, shininess:40,specular:0xffffff});
+		this.alienMaterials["gouraud"]= new THREE.MeshLambertMaterial({color: 0xff0000,  wireframe: true});
+		this.alienMaterials["basic"]= new THREE.MeshBasicMaterial({color: 0xff0000,  wireframe: true});
+		this.alienMaterials["phongCockpit"]= new THREE.MeshPhongMaterial({color: 0x00ff00,  wireframe: true, shininess:40,specular:0xffffff});
+		this.alienMaterials["gouraudCockpit"]= new THREE.MeshLambertMaterial({color: 0x00ff00,  wireframe: true});
+		this.alienMaterials["basicCockpit"]= new THREE.MeshBasicMaterial({color: 0x00ff00,  wireframe: true});
 
-		for( var i in materials){
-			this.materialArray.push(materials[i])
+		for( var i in this.alienMaterials){
+			this.materialArray.push(this.alienMaterials[i])
 		}
 
-		for (var r=1; r<=rows; r++ ){
-			for (var a=1;a<=aliensPerRow; a++){
-				var alien=new Alien(x*a-this.gameWidth/2, this.yLineup, (-this.gameHeight/2)+z*r, materials)
-				this.scene.add(alien)
-				this.collidables.push(alien)
-			}
+		this.positionAliens()
 
-		}
 	}
 
 /*	createShields(nshields){
@@ -131,6 +131,22 @@ class Game{
 		}
 	}
 	*/
+	positionAliens(){ 
+		var aliensPerRow=5;
+		var rows=3;
+		this.alienCounter=aliensPerRow*rows
+		var x= this.gameWidth/(aliensPerRow+1)
+		var z= this.gameHeight/2/(rows+1)
+		for (var r=1; r<=rows; r++ ){
+			for (var a=1;a<=aliensPerRow; a++){
+				var alien=new Alien(x*a-this.gameWidth/2, this.yLineup, (-this.gameHeight/2)+z*r, this.alienMaterials)
+				this.scene.add(alien)
+				this.collidables.push(alien)
+			}
+
+		}
+	}
+
 
 	wireChange(){
 		for (var i = 0; i < this.materialArray.length; i++) {
@@ -155,7 +171,10 @@ class Game{
 			}
 			if (!this.collidables[i].isAlive){
 				this.scene.remove(this.collidables[i])
+				if (this.collidables[i] instanceof Alien)
+					this.alienCounter--
 				this.collidables.splice(i,1)
+
 				i-=1
 
 			}
@@ -163,8 +182,26 @@ class Game{
 				this.collidables[i].position.set(this.collidables[i].tentativepos_x,this.yLineup,this.collidables[i].tentativepos_z)
 			}
 		}
+		
+		if(this.ship.lifedecrease){
+			if (this.lives==1){
+				this.ship.lifedecrease=false;
+				this.clock.stop()
+				this.gameover=true
+				this.backgroundMesh.material.map=this.gameOverTexture
 
-
+			}
+			else{
+				this.lifemodels[this.lives-1].visible=false
+				this.lives-=1;
+				this.ship.lifedecrease=false;
+			}
+		}
+		if (this.alienCounter==0){
+			this.gameover=true
+			this.clock.stop()
+			this.backgroundMesh.material.map=this.winTexture
+		}
 	}
 
 	pause(bool){
@@ -174,9 +211,26 @@ class Game{
 		}
 		else{
 			this.clock.start()
-			this.backgroundMesh.material.map=this.gameTexture
 
 		}
+	}
+
+	restart(){
+		this.clock.start()
+		this.lives=3
+		for (var i = 0; i < this.lifemodels.length; i++) {
+			this.lifemodels[i].visible=true
+		}
+		this.ship.position.x=0
+		this.ship.changeMaterial("phong")
+		for (var i = 0; i < this.collidables.length; i++) {
+			this.scene.remove(this.collidables[i])
+		}
+		this.collidables=[]
+		this.collidables.push(this.ship)
+		this.scene.add(this.ship)
+		this.positionAliens(5,3)
+		this.gameover=false
 	}
 
 	createCameras(){
@@ -232,7 +286,7 @@ class Game{
 	}
 
 
-/*
+
 	createScenery(){
 		var texture=THREE.ImageUtils.loadTexture("./stars.jpg");
 		var material=new THREE.MeshBasicMaterial({map : texture, color : 0xffffff, wireframe: true });
@@ -245,16 +299,16 @@ class Game{
 
 		this.scene.add(world)
 
-	}*/
+	}
 
 
 
-	createScenery(){
+	createBackground(){
 		var loader = new THREE.TextureLoader();
-		this.gameTexture = loader.load( 'stars.jpg' );
 		this.pauseTexture=loader.load('Pause.jpg');
 		this.gameOverTexture=loader.load('GameOver.jpg')
-		var material = new THREE.MeshBasicMaterial({map: this.gameTexture, depthTest:false, depthWrite:false})
+		this.winTexture=loader.load('allIdoIsWin.jpg')
+		var material = new THREE.MeshBasicMaterial({map: this.pauseTexture, depthTest:false, depthWrite:false})
 		//Para o z-buffer ignorar o background e mete lo la para tras (ou va, deixa-lo com o valor maximo)
 		var geometry = new THREE.PlaneGeometry(2, 2, 0) 
 		this.backgroundMesh = new THREE.Mesh(geometry, material );
@@ -303,6 +357,8 @@ class Game{
 			var life= this.ship.getShipGeometry();
 			light.position.set(x, 0, 0)
 			life.position.set(x,-30,0)
+			this.lifemodels.push(life)
+
 			this.scene.add(light)
 			this.scene.add(life)
 			x+=50

@@ -70,6 +70,8 @@ class Alien extends GraphicalEntity{
 			//game.scene.remove(this)
 			//game.collidables.splice(game.collidables.indexOf(this),1)
 		}
+		else if (graphEnt instanceof spaceShip)
+			this.isAlive=false
 	}
 
 	calculatePos(delta){
