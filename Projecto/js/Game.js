@@ -169,12 +169,13 @@ class Game{
 
 	pause(bool){
 		if (bool){
-			console.log("stop")
 			this.clock.stop()
+			this.backgroundMesh.material.map=this.pauseTexture
 		}
 		else{
-			console.log("start")
 			this.clock.start()
+			this.backgroundMesh.material.map=this.gameTexture
+
 		}
 	}
 
@@ -250,16 +251,17 @@ class Game{
 
 	createScenery(){
 		var loader = new THREE.TextureLoader();
-		var texture = loader.load( 'stars.jpg' );
-		var material = new THREE.MeshBasicMaterial({map: texture})
-		material.depthTest = false;	//Para o z-buffer ignorar o background e mete lo la para tras (ou va, deixa-lo com o valor maximo)
-		material.depthWrite = false;
+		this.gameTexture = loader.load( 'stars.jpg' );
+		this.pauseTexture=loader.load('Pause.jpg');
+		this.gameOverTexture=loader.load('GameOver.jpg')
+		var material = new THREE.MeshBasicMaterial({map: this.gameTexture, depthTest:false, depthWrite:false})
+		//Para o z-buffer ignorar o background e mete lo la para tras (ou va, deixa-lo com o valor maximo)
 		var geometry = new THREE.PlaneGeometry(2, 2, 0) 
-		var backgroundMesh = new THREE.Mesh(geometry, material );
+		this.backgroundMesh = new THREE.Mesh(geometry, material );
 		this.backgroundScene = new THREE.Scene();
         this.backgroundCamera = new THREE.Camera(); //predefinida= ortografica com left e bot = -1  e  right e top= 1
         this.backgroundScene.add(this.backgroundCamera);
-        this.backgroundScene.add(backgroundMesh);
+        this.backgroundScene.add(this.backgroundMesh);
 
 	}
 
@@ -335,5 +337,8 @@ class Game{
 			else
 				this.stars[i].intensity=0.1
 		}
+	}
+	toggleLuzNave(){
+		this.ship.toggleSpotlight();
 	}
 }

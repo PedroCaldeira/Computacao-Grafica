@@ -78,14 +78,14 @@ class spaceShip extends GraphicalEntity{
 		geometry.vertices.push(new THREE.Vector3(-5,-5,-15),new THREE.Vector3(-5,5,-15), new THREE.Vector3(5,5,-15), new THREE.Vector3(5,-5,-15), new THREE.Vector3(0,0,-25));
 		geometry.faces.push(new THREE.Face3(0,1,4),new THREE.Face3(1,2,4),new THREE.Face3(2,3,4),new THREE.Face3(3,0,4));
 		geometry.computeFaceNormals();
-		var light= new THREE.SpotLight( 0x555555, 5, 300, 1.05, 0.25, 0.5 );
-		light.position.set( 0,0, -25 );
-		light.target.position.set(0,0,-100)
-		obj.add(light.target)
+		this.spotLight= new THREE.SpotLight( 0x555555, 5, 300, 1.05, 0.25, 0.5 );
+		this.spotLight.position.set( 0,0, -25 );
+		this.spotLight.target.position.set(0,0,-100)
+		obj.add(this.spotLight.target)
 
 
 		var mesh = new THREE.Mesh(geometry, this.material);
-		mesh.add(light)
+		mesh.add(this.spotLight)
 		obj.add(mesh);
 	}
 
@@ -182,6 +182,12 @@ class spaceShip extends GraphicalEntity{
 		this.ship.children[this.ship.children.length-2].material=this.materials[type+"double"]
 		this.ship.children[this.ship.children.length-1].material=this.materials[type+"double"]
 
+	}
+	toggleSpotlight(){
+		if (this.spotLight.intensity!=0)
+			this.spotLight.intensity=0;
+		else
+			this.spotLight.intensity=5;
 	}
 
 }

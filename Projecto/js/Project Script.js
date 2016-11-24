@@ -10,19 +10,21 @@ var delta;
 var first=true, illumination=true;
 var illuType="phong"
 var game, cameraControls;
-var pauseBool=true;
+var pauseBool=false;
 
 
 function render(){
         'use strict';
         renderer.clear();
         //
-
         renderer.setViewport(0,0,window.innerWidth, window.innerHeight)
         renderer.render(game.backgroundScene, game.backgroundCamera);
-        renderer.render(game.scene, game.currentCamera);
-        renderer.setViewport(0, 0,window.innerWidth/3, window.innerHeight/3)
-        renderer.render(game.scene, game.livesCamera);
+        if (!pauseBool){
+        	renderer.render(game.scene, game.currentCamera);
+        	renderer.setViewport(0, 0,window.innerWidth/3, window.innerHeight/3)
+        	renderer.render(game.scene, game.livesCamera);
+        }
+        
 
 
 }
@@ -93,6 +95,9 @@ function onKeyDown(e){
 			if (illumination)
 				game.changeMaterials(illuType);
 			break;
+		case 72:
+			game.toggleLuzNave();
+			break;
 		case 76:
 			if (illumination)
 				illuType="basic"
@@ -109,8 +114,8 @@ function onKeyDown(e){
 				game.ship.setAcceleration(-500);
 			break;
 		case 83:
-			game.pause(pauseBool)
 			pauseBool=!pauseBool
+			game.pause(pauseBool)
 			break;
 
 
